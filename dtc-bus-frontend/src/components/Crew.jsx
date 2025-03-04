@@ -3,9 +3,10 @@ import axios from "axios";
 
 const Crew = () => {
   const [buses, setBuses] = useState([]);
-
+  const backend = "https://miniproject-g9lj.onrender.com";
+  // const backend = "http://localhost:8000";
   useEffect(() => {
-    axios.get("http://localhost:8000/api/crew") // Ensure the correct API route
+    axios.get(`${backend}/api/crew`) // Ensure the correct API route
       .then((res) => {
         setBuses(res.data);
         console.log("Fetched Crew Data:", res.data); // Debugging log

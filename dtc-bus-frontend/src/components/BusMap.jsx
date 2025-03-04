@@ -5,12 +5,13 @@ import axios from "axios";
 
 const BusMap = ({ selectedBusId }) => {
   const [bus, setBus] = useState(null);
-
+  const backend = "https://miniproject-g9lj.onrender.com";
+  // const backend = "http://localhost:8000";
   useEffect(() => {
     if (!selectedBusId) return;
 
     // Fetch bus data from API
-    axios.get(`http://localhost:8000/api/buses/${selectedBusId}`)
+    axios.get(`${backend}/api/buses/${selectedBusId}`)
       .then((res) => setBus(res.data))
       .catch((err) => console.error("Error fetching bus data:", err));
   }, [selectedBusId]);

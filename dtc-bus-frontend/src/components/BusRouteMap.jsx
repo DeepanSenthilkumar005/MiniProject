@@ -6,9 +6,11 @@ import axios from "axios";
 const BusRouteMap = () => {
   const { busId } = useParams();  // Get selected bus ID from URL
   const [stops, setStops] = useState([]);
+  const backend = "https://miniproject-g9lj.onrender.com";
+  // const backend = "http://localhost:8000";
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/buses/${busId}/stops`)
+    axios.get(`${backend}/api/buses/${busId}/stops`)
       .then((res) => setStops(res.data))
       .catch((err) => console.log(err));
   }, [busId]);
