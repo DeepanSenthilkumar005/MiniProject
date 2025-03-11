@@ -11,7 +11,9 @@ const RoutesPage = () => {
   const [showDestinationDropdown, setShowDestinationDropdown] = useState(false);
   const [error, setError] = useState("");
 
-  const backend = "http://localhost:8000";
+  // const backend = "http://localhost:8000";
+  const backend = "https://miniproject-g9lj.onrender.com";
+
 
   // Fetch all stops when the page loads
   useEffect(() => {
@@ -53,11 +55,10 @@ const RoutesPage = () => {
       return;
     }
 
-    const filtered = allStops
-      .filter(
-        (stop) =>
-          stop.toLowerCase().includes(text.toLowerCase()) && stop !== start
-      );
+    const filtered = allStops.filter(
+      (stop) =>
+        stop.toLowerCase().includes(text.toLowerCase()) && stop !== start
+    );
 
     setFilteredDestinations(filtered.length ? filtered : ["Place not found"]);
     setShowDestinationDropdown(true);
@@ -83,6 +84,7 @@ const RoutesPage = () => {
     setError(""); // Clear any previous error
   };
 
+  // Handle Search
   const handleSearch = async () => {
     if (!start || !destination) {
       setError("Please select both start and destination.");
@@ -96,9 +98,10 @@ const RoutesPage = () => {
       );
 
       const data = await response.json();
+      console.log("Fetched Data:", data); // ✅ Add this for debugging
 
-      if (!response.ok) {
-        setError(data.message || "No routes found.");
+      if (!data || data.length === 0) {
+        setError("No routes found.");
         setRoutes([]);
       } else {
         setRoutes(data);
@@ -135,7 +138,9 @@ const RoutesPage = () => {
                   className="p-1 hover:bg-blue-500 hover:text-white cursor-pointer"
                   onClick={() => selectStart(stop)}
                 >
-                  {stop}
+                  <p className={`${filteredStops.includes("Place not found") ? "text-red-600" : ""}`}>
+                    {stop}
+                  </p>
                 </li>
               ))}
             </ul>
@@ -158,7 +163,9 @@ const RoutesPage = () => {
                   className="p-1 hover:bg-blue-500 hover:text-white cursor-pointer"
                   onClick={() => selectDestination(stop)}
                 >
-                  {stop}
+                  <p className={`${filteredDestinations.includes("Place not found") ? "text-red-600" : ""}`}>
+                    {stop}
+                  </p>
                 </li>
               ))}
             </ul>
@@ -177,16 +184,33 @@ const RoutesPage = () => {
         {error && <div className="text-red-500 mt-4">{error}</div>}
 
         {/* Display Results */}
-        {routes.length > 0 && (
-          <div className="mt-5">
-            <h3 className="text-xl font-bold">Available Routes:</h3>
-            <ul className="list-disc ml-5">
-              {routes.map((route, index) => (
-                <li key={index} className="mt-2">{route.name}</li>
+        <ul>
+
+{/* Display Results */}
+{routes.length > 0 && (
+  <ul>
+    {routes.map((route, index) => (
+      <li key={index} className="mt-2">
+        <strong>{route.name}</strong>
+          {route.buses.map((bus, idx) => (
+            <div key={idx} className="ml-4">
+              🚍 Bus Number: {bus.busNumber} <br />
+              🕒 Start Timing: {bus.timings} <br />
+              🛑 Halt Duration at Stops:{" "}
+              {route.haltTimes.map((halt, idx) => (
+                <span key={idx}>{`${route.stops[idx]} - ${halt} mins`} <br /></span>
               ))}
-            </ul>
-          </div>
-        )}
+              🔄 Shift: {bus.shift === "up" ? "Up" : "Down"} <br />
+              🚌 Bus Type: {bus.busType}
+              <hr />
+            </div>
+          ))}
+        </li>
+      ))}
+    </ul>
+  )}
+
+        </ul>
       </div>
     </div>
   );

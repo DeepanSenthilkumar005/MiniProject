@@ -19,13 +19,13 @@ const Home = () => {
 
           {/* Content (not blurred) */}
           <div className="relative z-10 p-4">
-            <h1 className="text-3xl font-bold text-blue-600">Bus Scheduling System</h1>
-            <p className="mt-3 text-zinc-100">Automate and manage DTC bus schedules easily.</p>
-            <div className="mt-5 space-x-4">
-              <Link to="/schedule" className="bg-green-500 px-4 py-2 text-white rounded">
+            <h1 className="text-3xl font-bold text--600 text-green-600">Bus Scheduling System</h1>
+            <p className="mt-3 text-zinc-600">Automate and manage DTC bus schedules easily.</p>
+            <div className="mt-5 gap-4 w-full grid md:flex space-x-4">
+              <Link to="/schedule" className="bg-green-500 px-4 py-2 text-white rounded w-full">
                 View Schedule
               </Link>
-              <Link to="/routes" className="bg-purple-500 px-4 py-2 text-white rounded">
+              <Link to="/routes" className="bg-purple-500 px-4 py-2 text-white rounded w-full">
                 Manage Routes
               </Link>
             </div>
