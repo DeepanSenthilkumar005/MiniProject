@@ -48,8 +48,8 @@ const BusMap = ({ selectedBusId }) => {
       <MapContainer
         ref={mapRef}
         center={[bus.stops[Math.floor(bus.stops.length / 2)].latitude, bus.stops[Math.floor(bus.stops.length / 2)].longitude]}
-        zoom={12}
-        className="h-full w-full"
+        zoom={5}
+        className="h-full w-full -z-10"
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 

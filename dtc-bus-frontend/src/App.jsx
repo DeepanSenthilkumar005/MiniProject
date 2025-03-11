@@ -7,6 +7,7 @@ import Crew from "./components/Crew";
 import Buses from "./components/Buses";
 import AddItem from "./components/AddItem";
 import BusRouteMap from "./components/BusRouteMap";
+import PageNotFound from "./components/PageNotFound";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/add/:category" element={<AddItem />} />
           {/* // Add a new route for the bus route map */}
           <Route path="/bus/:busId/map" element={<BusRouteMap />} />
+          <Route path="*" element={<PageNotFound />}/>
         </Routes>
       </div>
     </Router>
