@@ -3,6 +3,7 @@ import backgroundImage from "../assets/image.png";
 
 const Home = () => {
   return (
+    
     <div
       className="text-center p-10 flex w-full items-center justify-center"
       style={{

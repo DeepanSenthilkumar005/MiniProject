@@ -14,7 +14,7 @@ function App() {
   return (
     <Router>
       <NavBar />
-      <div className="md:p-5">
+      
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/schedule" element={<Schedule />} />
@@ -26,7 +26,7 @@ function App() {
           <Route path="/bus/:busId/map" element={<BusRouteMap />} />
           <Route path="*" element={<PageNotFound />}/>
         </Routes>
-      </div>
+
     </Router>
   );
 }

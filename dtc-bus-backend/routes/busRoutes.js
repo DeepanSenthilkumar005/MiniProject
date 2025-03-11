@@ -3,6 +3,37 @@ const Bus = require("../models/Bus");
 
 const router = express.Router();
 
+// Route to Search for Bus Routes
+router.get("/search", async (req, res) => {
+  const { start, destination } = req.query;
+
+  if (!start || !destination) {
+      return res.status(400).json({ message: "Start and destination are required." });
+  }
+
+  try {
+      const routes = await Route.find({
+          stops: { $all: [start, destination] } // Ensures both start and destination are in the route
+      });
+
+      // Filter routes where the destination appears after the start point
+      const filteredRoutes = routes.filter(route => {
+          const startIndex = route.stops.indexOf(start);
+          const destinationIndex = route.stops.indexOf(destination);
+          return startIndex !== -1 && destinationIndex !== -1 && startIndex < destinationIndex;
+      });
+
+      if (filteredRoutes.length === 0) {
+          return res.status(404).json({ message: "No available routes found." });
+      }
+
+      res.json(filteredRoutes);
+  } catch (error) {
+      res.status(500).json({ message: "Error fetching routes", error: error.message });
+  }
+});
+
+
 // POST: Add a new bus
 router.post("/", async (req, res) => {
   try {
