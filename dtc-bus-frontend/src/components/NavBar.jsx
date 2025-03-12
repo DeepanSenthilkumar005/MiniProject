@@ -31,7 +31,7 @@ function NavBar() {
         <Link to="/schedule" className="hover:text-yellow-300">Schedule</Link>
         <Link to="/routes" className="hover:text-yellow-300">Routes</Link>
         <Link to="/crew" className="hover:text-yellow-300">Crew</Link>
-        <Link to="/buses" className="hover:text-yellow-300">Buses</Link>
+        <Link to="/buses" className="hover:text-yellow-300">Bus Map</Link>
       </div>
 
       {/* Hamburger Icon for Mobile */}

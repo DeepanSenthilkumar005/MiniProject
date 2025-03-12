@@ -1,16 +1,23 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { MapContainer, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Polyline,
+  Marker,
+  Popup,
+} from "react-leaflet";
 import axios from "axios";
 
 const BusRouteMap = () => {
-  const { busId } = useParams();  // Get selected bus ID from URL
+  const { busId } = useParams(); // Get selected bus ID from URL
   const [stops, setStops] = useState([]);
   const backend = "https://miniproject-g9lj.onrender.com";
   // const backend = "http://localhost:8000";
 
   useEffect(() => {
-    axios.get(`${backend}/api/buses/${busId}/stops`)
+    axios
+      .get(`${backend}/api/buses/${busId}/stops`)
       .then((res) => setStops(res.data))
       .catch((err) => console.log(err));
   }, [busId]);
@@ -20,11 +27,19 @@ const BusRouteMap = () => {
       <h1 className="text-2xl font-bold">Bus Route Map</h1>
 
       {stops.length > 0 ? (
-        <MapContainer center={[stops[0].latitude, stops[0].longitude]} zoom={13} style={{ height: "500px", width: "100%" }}>
+        <MapContainer
+          center={[stops[0].latitude, stops[0].longitude]}
+          // center={[stops[Math.floor(stops.length)].latitude, stops[Math.floor(stops.length)].longitude]}
+          zoom={13}
+          style={{ height: "500px", width: "100%" }}
+        >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
           {/* Draw polyline route */}
-          <Polyline positions={stops.map((stop) => [stop.latitude, stop.longitude])} color="blue" />
+          <Polyline
+            positions={stops.map((stop) => [stop.latitude, stop.longitude])}
+            color="blue"
+          />
 
           {/* Add markers for each stop */}
           {stops.map((stop, index) => (

@@ -8,6 +8,7 @@ const Schedule = () => {
   const [busStops, setBusStops] = useState([]);
   const backend = "https://miniproject-g9lj.onrender.com";
   // const backend = "http://localhost:8000";
+
   useEffect(() => {
     axios.get(`${backend}/api/schedules`)
       .then(res => setSchedules(res.data))

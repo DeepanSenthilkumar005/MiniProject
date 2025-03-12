@@ -8,6 +8,7 @@ import Buses from "./components/Buses";
 import AddItem from "./components/AddItem";
 import BusRouteMap from "./components/BusRouteMap";
 import PageNotFound from "./components/PageNotFound";
+import Login from "./components/LoginPage";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
       
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/routes" element={<RoutesPage />} />
           <Route path="/crew" element={<Crew />} />

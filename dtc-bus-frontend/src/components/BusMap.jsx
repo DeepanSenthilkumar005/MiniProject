@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import axios from "axios";
-import busStop from '../assets/BusMap/bus-stop.png';
-import busStand from '../assets/BusMap/bus-stand.png'; // Changed to local file for consistency
+import busStop from "../assets/BusMap/bus-stop.png";
+import busStand from "../assets/BusMap/bus-stand.png"; // Changed to local file for consistency
 
 const BusMap = ({ selectedBusId }) => {
   const [bus, setBus] = useState(null);
@@ -22,7 +22,7 @@ const BusMap = ({ selectedBusId }) => {
 
         if (mapRef.current && res.data?.stops?.length > 0) {
           mapRef.current.setView(
-            [res.data.stops[0].latitude, res.data.stops[0].longitude],
+            [res.data.stops[Math.floor(res.data.stops.length / 2)].latitude, res.data.stops[Math.floor(res.data.stops.length / 2)].longitude],
             12
           );
         }
@@ -33,7 +33,8 @@ const BusMap = ({ selectedBusId }) => {
   // Dynamic icon logic
   const getCustomIcon = (index) => {
     return new L.Icon({
-      iconUrl: index === 0 || index === bus.stops.length - 1 ? busStand : busStop,
+      iconUrl:
+        index === 0 || index === bus.stops.length - 1 ? busStand : busStop,
       iconSize: [35, 35],
       iconAnchor: [17, 35],
       popupAnchor: [0, -35],
@@ -67,7 +68,8 @@ const BusMap = ({ selectedBusId }) => {
           >
             <Popup>
               <strong>{stop.name}</strong> <br />
-              🚏 {index === 0
+              🚏{" "}
+              {index === 0
                 ? "Starting Point"
                 : index === bus.stops.length - 1
                 ? "Destination"
