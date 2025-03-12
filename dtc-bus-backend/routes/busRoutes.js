@@ -70,4 +70,21 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+
+router.post("/:id/add-stop", async (req, res) => {
+  try {
+      const { name, latitude, longitude } = req.body;
+      const bus = await Bus.findById(req.params.id);
+      if (!bus) return res.status(404).json({ message: "Bus not found" });
+
+      bus.stops.push({ name, latitude, longitude }); // Add stop to array
+      await bus.save();
+      res.json(bus);
+  } catch (error) {
+      res.status(500).json({ message: "Error adding stop", error: error.message });
+  }
+});
+
+
+
 module.exports = router;

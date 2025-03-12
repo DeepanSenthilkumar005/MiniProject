@@ -6,6 +6,16 @@ function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
+  // Define navigation links
+  const navLinks = [
+    { path: "/", label: "Home" },
+    { path: "/schedule", label: "Schedule" },
+    { path: "/routes", label: "Routes" },
+    { path: "/crew", label: "Crew" },
+    { path: "/buses", label: "Bus Map" },
+    { path: "/add/busstoplist", label: "Add Bus" },
+  ];
+
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -27,11 +37,11 @@ function NavBar() {
 
       {/* Desktop Links */}
       <div className="hidden md:flex space-x-4">
-        <Link to="/" className="hover:text-yellow-300">Home</Link>
-        <Link to="/schedule" className="hover:text-yellow-300">Schedule</Link>
-        <Link to="/routes" className="hover:text-yellow-300">Routes</Link>
-        <Link to="/crew" className="hover:text-yellow-300">Crew</Link>
-        <Link to="/buses" className="hover:text-yellow-300">Bus Map</Link>
+        {navLinks.map((link, index) => (
+          <Link key={index} to={link.path} className="hover:text-yellow-300">
+            {link.label}
+          </Link>
+        ))}
       </div>
 
       {/* Hamburger Icon for Mobile */}
@@ -47,11 +57,16 @@ function NavBar() {
           ref={menuRef}
           className="absolute top-14 left-0 w-full bg-gradient-to-r from-green-700 via-green-500 to-green-400 text-center space-y-4 py-4 md:hidden shadow-md"
         >
-          <Link to="/" className="block hover:text-yellow-300" onClick={handleLinkClick}>Home</Link>
-          <Link to="/schedule" className="block hover:text-yellow-300" onClick={handleLinkClick}>Schedule</Link>
-          <Link to="/routes" className="block hover:text-yellow-300" onClick={handleLinkClick}>Routes</Link>
-          <Link to="/crew" className="block hover:text-yellow-300" onClick={handleLinkClick}>Crew</Link>
-          <Link to="/buses" className="block hover:text-yellow-300" onClick={handleLinkClick}>Buses</Link>
+          {navLinks.map((link, index) => (
+            <Link
+              key={index}
+              to={link.path}
+              className="block hover:text-yellow-300"
+              onClick={handleLinkClick}
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
       )}
     </nav>

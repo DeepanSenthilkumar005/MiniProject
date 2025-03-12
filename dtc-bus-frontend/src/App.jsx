@@ -9,6 +9,7 @@ import AddItem from "./components/AddItem";
 import BusRouteMap from "./components/BusRouteMap";
 import PageNotFound from "./components/PageNotFound";
 import Login from "./components/LoginPage";
+import AddBusStopList from "./components/AddBusStopList";
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/crew" element={<Crew />} />
           <Route path="/buses" element={<Buses />} />
           <Route path="/add/:category" element={<AddItem />} />
+          <Route path="/add/busstoplist" element={<AddBusStopList />} />
           {/* // Add a new route for the bus route map */}
           <Route path="/bus/:busId/map" element={<BusRouteMap />} />
           <Route path="*" element={<PageNotFound />}/>
