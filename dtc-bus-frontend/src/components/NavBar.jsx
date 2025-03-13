@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 
 function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +34,7 @@ function NavBar() {
   const handleLinkClick = () => setIsOpen(false);
 
   return (
-    <nav className="rounded-b-sm shadow shadow-gray-800 bg-gradient-to-r from-[#FF512F] to-[#F09819] sticky top-0 p-4 flex justify-between items-center text-white z-50">
+    <nav className="rounded-b-sm shadow shadow-gray-800 bg-gradient-to-r from-[#FF512F] to-[#F09819] sticky top-0 p-4 flex justify-between items-center text-white z-50 transition-all ease-in-out duration-200">
       <h1 className="text-xl font-bold cursor-pointer hover:scale-110 duration-300">
         Bus Scheduling
       </h1>
@@ -58,7 +59,7 @@ function NavBar() {
       {/* Hamburger Icon for Mobile */}
       <div className="md:hidden">
         <button onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+          {isOpen ? <IoMdClose  size={24} /> : <FaBars size={24} />}
         </button>
       </div>
 
@@ -66,19 +67,22 @@ function NavBar() {
       {isOpen && (
         <div
           ref={menuRef}
-          className="absolute top-14 left-0 w-full bg-gradient-to-r from-green-700 via-green-500 to-green-400 text-center space-y-4 py-4 md:hidden shadow-md"
+          className="absolute w-2/3 top-15 h-screen right-0 bg-gradient-to-r from-[#F87424] to-[#F09819] text-center space-y-4 py-4 md:hidden shadow-md"
         >
           {navLinks.map((link, index) => (
-            <Link
-              key={index}
-              to={link.path}
-              className={`block px-3 py-2 rounded-md ${
-                location.pathname === link.path ? "bg-yellow-300 text-black" : "hover:text-yellow-300"
-              }`}
-              onClick={handleLinkClick}
-            >
-              {link.label}
-            </Link>
+            <div className="w-full flex justify-center">
+              
+              <Link
+                key={index}
+                to={link.path}
+                className={`block font-medium px-3 py-2 w-fit rounded-md ${
+                  location.pathname === link.path ? "bg-yellow-300 text-black rounded-md " : "hover:text-yellow-300"
+                }`}
+                onClick={handleLinkClick}
+              >
+                {link.label}
+              </Link>
+            </div>
           ))}
         </div>
       )}
