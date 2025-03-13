@@ -26,7 +26,7 @@ const Buses = () => {
         <option value="">-- Select a Bus --</option>
         {buses.map((bus) => (
           <option key={bus._id} value={bus._id}>
-            {bus.name} ({bus.number})
+            {bus.name}
           </option>
         ))}
       </select>

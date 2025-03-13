@@ -22,7 +22,10 @@ const BusMap = ({ selectedBusId }) => {
 
         if (mapRef.current && res.data?.stops?.length > 0) {
           mapRef.current.setView(
-            [res.data.stops[Math.floor(res.data.stops.length / 2)].latitude, res.data.stops[Math.floor(res.data.stops.length / 2)].longitude],
+            [
+              res.data.stops[Math.floor(res.data.stops.length / 2)].latitude,
+              res.data.stops[Math.floor(res.data.stops.length / 2)].longitude,
+            ],
             12
           );
         }
@@ -78,6 +81,14 @@ const BusMap = ({ selectedBusId }) => {
           </Marker>
         ))}
       </MapContainer>
+
+      {/* Show the Route After the Map */}
+
+      {/* {bus.number.map((name, i) => (
+        <p key={i}>{name}</p>
+        ))} */}
+      <h2 className="text-lg font-bold mb-2 mt-4">Bus Names</h2>
+      <p className="ms-2 pb-6">{bus.number}</p>
     </div>
   );
 };
