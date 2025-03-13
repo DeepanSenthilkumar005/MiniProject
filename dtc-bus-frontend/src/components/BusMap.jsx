@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import axios from "axios";
-import busStop from "../assets/BusMap/bus-stop.png";
-import busStand from "../assets/BusMap/bus-stand.png"; // Changed to local file for consistency
+import busStop from "../assets/BusMap/bus-stop1.png";
+import busStand from "../assets/BusMap/bus-stand-1.png"; // Changed to local file for consistency
 
 const BusMap = ({ selectedBusId }) => {
   const [bus, setBus] = useState(null);
