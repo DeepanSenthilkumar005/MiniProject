@@ -59,7 +59,7 @@ function NavBar() {
       {/* Hamburger Icon for Mobile */}
       <div className="md:hidden">
         <button onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <IoMdClose size={24} /> : <FaBars size={24} />}
+          {isOpen ? <IoMdClose  size={24} /> : <FaBars size={24} />}
         </button>
       </div>
 
@@ -67,17 +67,19 @@ function NavBar() {
       {isOpen && (
         <div
           ref={menuRef}
-          className="absolute w-2/3 top-15 h-screen right-0 bg-white/10 backdrop-blur-sm text-center space-y-4 py-4 md:hidden shadow-md"
+          className="absolute w-2/3 top-15 h-screen right-0 bg-gradient-to-r from-[#F87424] to-[#F09819] text-center space-y-4 py-4 md:hidden shadow-md"
+          // Add for the Video bg
+          // className="absolute w-2/3 top-15 h-screen right-0 bg-white/10 backdrop-blur-sm text-center space-y-4 py-4 md:hidden shadow-md"
+
         >
           {navLinks.map((link, index) => (
             <div className="w-full flex justify-center">
+              
               <Link
                 key={index}
                 to={link.path}
                 className={`block font-medium px-3 py-2 w-fit rounded-md ${
-                  location.pathname === link.path
-                    ? "bg-yellow-300 text-black rounded-md"
-                    : "hover:text-yellow-300"
+                  location.pathname === link.path ? "bg-yellow-300 text-black rounded-md " : "hover:text-yellow-300"
                 }`}
                 onClick={handleLinkClick}
               >

@@ -28,7 +28,7 @@ function App() {
           <Route path="/add/busstoplist" element={<AddBusStopList />} />
           {/* // Add a new route for the bus route map */}
           <Route path="/bus/:busId/map" element={<BusRouteMap />} />
-          <Route path="*" element={<PageNotFound />} />
+          <Route path="/*" element={<PageNotFound />} />
         </Routes>
       </Router>
     </div>
