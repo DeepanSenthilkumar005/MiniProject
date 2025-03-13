@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 
 function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
+  const location = useLocation(); // Get current route
 
   // Define navigation links
   const navLinks = [
@@ -32,13 +33,23 @@ function NavBar() {
   const handleLinkClick = () => setIsOpen(false);
 
   return (
-    <nav className="bg-gradient-to-r from-green-700 via-green-500 to-green-400 sticky top-0 p-4 flex justify-between items-center text-white shadow-lg z-50">
-      <h1 className="text-xl font-bold">Bus Scheduling</h1>
+    <nav className="rounded-b-sm shadow shadow-gray-800 bg-gradient-to-r from-[#FF512F] to-[#F09819] sticky top-0 p-4 flex justify-between items-center text-white z-50">
+      <h1 className="text-xl font-bold cursor-pointer hover:scale-110 duration-300">
+        Bus Scheduling
+      </h1>
 
       {/* Desktop Links */}
       <div className="hidden md:flex space-x-4">
         {navLinks.map((link, index) => (
-          <Link key={index} to={link.path} className="hover:text-yellow-300">
+          <Link
+            key={index}
+            to={link.path}
+            className={`px-3 py-2 rounded-md duration-200 ease-in-out ${
+              location.pathname === link.path
+                ? "bg-[#233d4d] " // Active link styling
+                : "hover:text-[#233d4d] hover:scale-110"
+            }`}
+          >
             {link.label}
           </Link>
         ))}
@@ -61,7 +72,9 @@ function NavBar() {
             <Link
               key={index}
               to={link.path}
-              className="block hover:text-yellow-300"
+              className={`block px-3 py-2 rounded-md ${
+                location.pathname === link.path ? "bg-yellow-300 text-black" : "hover:text-yellow-300"
+              }`}
               onClick={handleLinkClick}
             >
               {link.label}

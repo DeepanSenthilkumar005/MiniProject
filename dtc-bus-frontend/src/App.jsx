@@ -11,12 +11,12 @@ import PageNotFound from "./components/PageNotFound";
 import Login from "./components/LoginPage";
 import AddBusStopList from "./components/AddBusStopList";
 
-
 function App() {
   return (
-    <Router>
-      <NavBar />
-      
+    <div className="poppins">
+      <Router>
+        <NavBar />
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -28,10 +28,10 @@ function App() {
           <Route path="/add/busstoplist" element={<AddBusStopList />} />
           {/* // Add a new route for the bus route map */}
           <Route path="/bus/:busId/map" element={<BusRouteMap />} />
-          <Route path="*" element={<PageNotFound />}/>
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
-
-    </Router>
+      </Router>
+    </div>
   );
 }
 
