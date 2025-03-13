@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { backend } from "../App";
 
-const backend = "https://miniproject-g9lj.onrender.com"; // Update if needed
-// const backend = "http://localhost:8000"; // Update if needed
+
 
 const AddBusStopList = () => {
   const [buses, setBuses] = useState([]);

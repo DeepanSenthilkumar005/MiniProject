@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import {backend} from '../App'
 const Crew = () => {
   const [buses, setBuses] = useState([]);
-  const backend = "https://miniproject-g9lj.onrender.com";
-  // const backend = "http://localhost:8000";
   useEffect(() => {
     axios.get(`${backend}/api/crew`) // Ensure the correct API route
       .then((res) => {

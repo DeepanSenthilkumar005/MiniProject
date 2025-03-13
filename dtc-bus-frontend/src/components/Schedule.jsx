@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import BusMap from "./BusMap";
+import { backend } from "../App";
 
 const Schedule = () => {
   const [schedules, setSchedules] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
   const [busStops, setBusStops] = useState([]);
-  const backend = "https://miniproject-g9lj.onrender.com";
-  // const backend = "http://localhost:8000";
 
   useEffect(() => {
     axios.get(`${backend}/api/schedules`)

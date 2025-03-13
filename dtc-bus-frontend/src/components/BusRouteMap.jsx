@@ -8,12 +8,11 @@ import {
   Popup,
 } from "react-leaflet";
 import axios from "axios";
+import { backend } from "../App";
 
 const BusRouteMap = () => {
   const { busId } = useParams(); // Get selected bus ID from URL
   const [stops, setStops] = useState([]);
-  const backend = "https://miniproject-g9lj.onrender.com";
-  // const backend = "http://localhost:8000";
 
   useEffect(() => {
     axios

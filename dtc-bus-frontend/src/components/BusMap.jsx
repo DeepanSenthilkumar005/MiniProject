@@ -4,13 +4,12 @@ import L from "leaflet";
 import axios from "axios";
 import busStop from "../assets/BusMap/bus-stop1.png";
 import busStand from "../assets/BusMap/bus-stand-1.png"; // Changed to local file for consistency
+import { backend } from "../App";
 
 const BusMap = ({ selectedBusId }) => {
   const [bus, setBus] = useState(null);
   const mapRef = useRef(null);
 
-  const backend = "https://miniproject-g9lj.onrender.com";
-  // const backend = "http://localhost:8000";
 
   useEffect(() => {
     if (!selectedBusId) return;

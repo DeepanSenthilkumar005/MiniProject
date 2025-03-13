@@ -11,7 +11,12 @@ import PageNotFound from "./components/PageNotFound";
 import Login from "./components/LoginPage";
 import AddBusStopList from "./components/AddBusStopList";
 
+export const backend = "https://miniproject-g9lj.onrender.com";
+// export const backend = "http://localhost:8000";
+
 function App() {
+
+
   return (
     <div className="poppins">
       <Router>

@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import BusMap from "./BusMap"; // Import the map component
+import { backend } from "../App";
 
 const BusSelection = () => {
   const [buses, setBuses] = useState([]);
   const [selectedBusId, setSelectedBusId] = useState(null);
-  const backend = "https://miniproject-g9lj.onrender.com";
-  // const backend = "http://localhost:8000";
   useEffect(() => {
     axios.get(`${backend}/api/buses`)
       .then(res => setBuses(res.data))
