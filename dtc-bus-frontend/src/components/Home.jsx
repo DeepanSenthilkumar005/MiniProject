@@ -1,19 +1,26 @@
 import { Link } from "react-router-dom";
-// import backgroundImage from "../assets/image.png";
-import backgroundImage from "../assets/Home/bg.jpeg";
+import backgroundImage from "../assets/Home/BgVideo.mp4";
+// import backgroundImage from "../assets/Home/bg.jpeg";
 
 const Home = () => {
   return (
     <div
-      className="text-center p-10 flex w-full items-center justify-center bg-gray-100"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100vh", // Ensure the div has height
-        // position:'sticky',
-      }}
+      className="text-center p-10 flex w-full items-center h-svh relative justify-center bg-gray-100"
+      // style={{
+      //   // backgroundImage: `url(${backgroundImage})`,
+      //   backgroundSize: "cover",
+      //   backgroundPosition: "center",
+      //   height: "100vh", // Ensure the div has height
+      //   // position:'sticky',
+      // }}
     >
+      <video
+        className="absolute top-0 left-0 w-full h-full object-cover"
+        autoPlay
+        loop
+        muted
+        src={backgroundImage}
+      ></video>
       <div className="relative p-4 rounded-2xl">
         {/* Background Blur */}
         <div className="absolute inset-0 bg-white/10 backdrop-blur-xs shadow-zinc-50 rounded-2xl"></div>
