@@ -49,7 +49,7 @@ const BusMap = ({ selectedBusId }) => {
   }
 
   return (
-    <div className="h-96 w-full">
+    <div className="h-96 -z-30 w-full">
       <h2 className="text-lg font-bold mb-2">Bus Route Map</h2>
 
       <MapContainer
@@ -58,8 +58,8 @@ const BusMap = ({ selectedBusId }) => {
           bus.stops[Math.floor(bus.stops.length / 2)].latitude,
           bus.stops[Math.floor(bus.stops.length / 2)].longitude,
         ]}
-        zoom={10}
-        className="h-full w-full"
+        zoom={8}
+        className="h-full z-0 w-full"
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 

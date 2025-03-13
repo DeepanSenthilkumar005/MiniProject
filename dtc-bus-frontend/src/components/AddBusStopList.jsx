@@ -139,7 +139,7 @@ const AddBusStopList = () => {
               }`}
               onClick={() => handleSelectBus(bus)}
             >
-              <h3 className="font-bold">{bus.name} ({bus.number})</h3>
+              <h3 className="font-bold">{bus.name}</h3>
               <p className="text-sm text-gray-700">Stops: {bus.stops.length}</p>
             </li>
           ))}
