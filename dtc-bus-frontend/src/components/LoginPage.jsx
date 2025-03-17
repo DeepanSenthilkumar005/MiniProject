@@ -76,7 +76,7 @@ function LoginPage() {
           className="mx-auto h-10 w-auto rounded-sm"
         />
         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-          {login ? "Welcome Back!" : "Welcome to the App!"}
+          {login ? "Welcome Back!" : "Register the App!"}
         </h2>
       </div>
 
