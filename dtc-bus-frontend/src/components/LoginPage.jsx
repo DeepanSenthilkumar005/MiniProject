@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import logo from "../../public/Icon.jpg";
+import axios from "axios";
+import { backend } from "../App";
 
 function LoginPage() {
+  const [msg, setMsg] = useState("");
   const [show, setShow] = useState(false);
   const [login, setLogin] = useState(true);
+  const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
@@ -19,6 +23,47 @@ function LoginPage() {
     }
   }, [confirmPassword, password, login]);
 
+  async function handleClick() {
+    if(!mail || !password)
+    {
+      setMsg("Enter All Fields");
+      return;
+    }
+    if (!login) {
+      if (confirmPassword !== password) {
+        setMsg("Passwords do not match and then Submit");
+        return;
+      }
+      try {
+        const res = await axios.post(`${backend}/api/login/auth`, {
+          mail: mail,
+          password: password,
+        });
+        console.log(res.data);
+        setMsg(res.data);
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      try{
+        await axios.get(`${backend}/api/login/auth/${mail}/${password}`)
+        .then((res)=>{console.log(res.data);
+          setMsg(res.data)
+        })
+      }
+      catch(e)
+      {
+        console.log(e);
+        
+      }
+    }
+  }
+if(msg)
+{
+  setTimeout(() => {
+    setMsg("");
+  }, 3000);
+}
   return (
     <div className="flex min-h-full h-svh flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm h-fit">
@@ -34,6 +79,7 @@ function LoginPage() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form action="#" method="POST" className="space-y-6">
+          <p className="flex justify-center text-red-500">{msg}</p>
           {/* Email Field */}
           <div>
             <label
@@ -50,6 +96,7 @@ function LoginPage() {
                 required
                 autoComplete="email"
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
+                onChange={(e) => setMail(e.target.value)}
               />
             </div>
           </div>
@@ -123,8 +170,9 @@ function LoginPage() {
           {/* Submit Button */}
           <div>
             <button
-              type="submit"
+              type="button"
               className="flex w-full justify-center rounded-md bg-orange-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              onClick={handleClick}
             >
               {login ? "Login" : "Register"}
             </button>

@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const busRoutes = require("./routes/busRoutes");
 const crewRoutes = require("./routes/crewRoutes");
 const routeRoutes = require("./routes/routes"); // ✅ Correct import
+const loginRoute = require("./routes/loginRoute");
 
 dotenv.config();
 const app = express();
@@ -23,6 +24,7 @@ mongoose
 app.use("/api/crew", crewRoutes);
 app.use("/api/routes", routeRoutes);  // ✅ Correct usage
 app.use("/api/buses", busRoutes);     // ✅ Correct usage
+app.use("/api/login",loginRoute);
 
 // Start Server
 const PORT = process.env.PORT || 8000;
