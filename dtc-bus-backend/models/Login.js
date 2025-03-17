@@ -18,6 +18,6 @@ const loginSchema = new mongoose.Schema({
 });
 
 // Ensure the TTL index is created
-loginSchema.index({ createdAt: 1 }, { expireAfterSeconds: 10 });
+loginSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 });
 
 module.exports = mongoose.model("Login", loginSchema);
