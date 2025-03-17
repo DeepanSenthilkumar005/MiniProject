@@ -1,8 +1,23 @@
 const mongoose = require("mongoose");
 
 const loginSchema = new mongoose.Schema({
-  mail: { required: true, type: String, unique: true },
-  password: { required: true, type: String },
-  createdAt: { type: Date, default: Date.now, expires: 60 }
+  mail: { 
+    type: String, 
+    required: [true, "Email is required"], 
+    unique: true, 
+  },
+  password: { 
+    type: String, 
+    required: [true, "Password is required"] 
+  },
+  createdAt: { 
+    type: Date, 
+    default: Date.now, 
+    expires: 60  // Document will auto-delete after 60 seconds
+  }
 });
+
+// Ensure the TTL index is created
+loginSchema.index({ createdAt: 1 }, { expireAfterSeconds: 10 });
+
 module.exports = mongoose.model("Login", loginSchema);

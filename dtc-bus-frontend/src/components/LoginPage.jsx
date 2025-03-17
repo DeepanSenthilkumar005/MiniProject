@@ -13,6 +13,7 @@ function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
+  // Validate confirm password when typing
   useEffect(() => {
     if (!login && confirmPassword) {
       if (confirmPassword !== password) {
@@ -23,47 +24,49 @@ function LoginPage() {
     }
   }, [confirmPassword, password, login]);
 
+  // Clear message after 3 seconds
+  useEffect(() => {
+    if (msg) {
+      const timer = setTimeout(() => setMsg(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [msg]);
+
+  function handleClear() {
+    setMail("");
+    setPassword("");
+    setConfirmPassword("");
+    setConfirmPasswordError("");
+  }
+
   async function handleClick() {
-    if(!mail || !password)
-    {
-      setMsg("Enter All Fields");
+    if (!mail || !password) {
+      setMsg("Enter all fields");
       return;
     }
-    if (!login) {
-      if (confirmPassword !== password) {
-        setMsg("Passwords do not match and then Submit");
-        return;
-      }
-      try {
-        const res = await axios.post(`${backend}/api/login/auth`, {
-          mail: mail,
-          password: password,
-        });
-        console.log(res.data);
-        setMsg(res.data);
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
-      try{
-        await axios.get(`${backend}/api/login/auth/${mail}/${password}`)
-        .then((res)=>{console.log(res.data);
-          setMsg(res.data)
-        })
-      }
-      catch(e)
-      {
-        console.log(e);
-        
-      }
+
+    if (!login && confirmPassword !== password) {
+      setMsg("Passwords do not match");
+      return;
+    }
+
+    try {
+      const url = login
+        ? `${backend}/api/login/auth/${mail}/${password}`
+        : `${backend}/api/login/auth`;
+
+      const res = login
+        ? await axios.get(url)
+        : await axios.post(url, { mail, password });
+
+      console.log(res.data);
+      setMsg(res.data);
+      handleClear();
+    } catch (e) {
+      console.error("Error:", e.response?.data || e.message);
     }
   }
-if(msg)
-{
-  setTimeout(() => {
-    setMsg("");
-  }, 3000);
-}
+
   return (
     <div className="flex min-h-full h-svh flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm h-fit">
@@ -80,12 +83,10 @@ if(msg)
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form action="#" method="POST" className="space-y-6">
           <p className="flex justify-center text-red-500">{msg}</p>
+
           {/* Email Field */}
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-900"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-900">
               Email address
             </label>
             <div className="mt-2">
@@ -93,6 +94,7 @@ if(msg)
                 id="email"
                 name="email"
                 type="email"
+                value={mail}
                 required
                 autoComplete="email"
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
@@ -104,18 +106,12 @@ if(msg)
           {/* Password Field with Show/Hide */}
           <div>
             <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-900"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-900">
                 Password
               </label>
               {login && (
                 <div className="text-sm">
-                  <a
-                    href="#"
-                    className="font-semibold text-orange-600 hover:text-orange-500"
-                  >
+                  <a href="#" className="font-semibold text-orange-600 hover:text-orange-500">
                     Forgot password?
                   </a>
                 </div>
@@ -126,6 +122,7 @@ if(msg)
                 id="password"
                 name="password"
                 type={show ? "text" : "password"}
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
@@ -144,10 +141,7 @@ if(msg)
           {/* Confirm Password Field (Only for Register) */}
           {!login && (
             <div>
-              <label
-                htmlFor="confirmpassword"
-                className="block text-sm font-medium text-gray-900"
-              >
+              <label htmlFor="confirmpassword" className="block text-sm font-medium text-gray-900">
                 Confirm Password
               </label>
               <div className="mt-2">
@@ -155,15 +149,14 @@ if(msg)
                   id="confirmpassword"
                   name="confirmpassword"
                   type="password"
+                  value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   autoComplete="new-password"
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
                 />
               </div>
-              {confirmPasswordError && (
-                <p className="text-red-500">{confirmPasswordError}</p>
-              )}
+              {confirmPasswordError && <p className="text-red-500">{confirmPasswordError}</p>}
             </div>
           )}
 

@@ -31,7 +31,11 @@ router.post('/auth',async(req, res)=>{
         await add.save();
         res.status(200).json("SuccesfullAdded")
     } catch (error) {
-        console.log("Error in Adding the File "+error);
+        if (error.code === 11000) {
+            res.status(400).json({ message: "Email already registered" });
+        }
+        else{
+        console.log("Error in Adding the File "+error);}
         
     }
 })
