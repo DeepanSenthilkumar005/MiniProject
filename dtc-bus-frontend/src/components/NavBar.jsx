@@ -16,6 +16,7 @@ function NavBar() {
     { path: "/crew", label: "Crew" },
     { path: "/buses", label: "Bus Map" },
     { path: "/add/busstoplist", label: "Add Bus" },
+    { path: "/login", label: "Login" },
   ];
 
   // Close menu when clicking outside
