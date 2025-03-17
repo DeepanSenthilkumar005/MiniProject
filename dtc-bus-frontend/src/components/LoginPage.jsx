@@ -111,9 +111,9 @@ function LoginPage() {
               </label>
               {login && (
                 <div className="text-sm">
-                  <a href="#" className="font-semibold text-orange-600 hover:text-orange-500">
+                  <button type="button" className="font-semibold text-orange-600 hover:text-orange-500 cursor-pointer" onClick={()=>setMsg("Api Added Soon")} >
                     Forgot password?
-                  </a>
+                  </button>
                 </div>
               )}
             </div>
