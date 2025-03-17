@@ -4,7 +4,7 @@ const loginSchema = new mongoose.Schema({
   mail: { 
     type: String, 
     required: [true, "Email is required"], 
-    unique: true, 
+    unique: true 
   },
   password: { 
     type: String, 
@@ -12,12 +12,11 @@ const loginSchema = new mongoose.Schema({
   },
   createdAt: { 
     type: Date, 
-    default: Date.now, 
-    expires: 60  // Document will auto-delete after 60 seconds
+    default: Date.now 
   }
 });
 
-// Ensure the TTL index is created
-loginSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 });
+// Ensure TTL index is created (deletes after 60 seconds)
+loginSchema.index({ createdAt: 1 }, { expireAfterSeconds: 10 });
 
 module.exports = mongoose.model("Login", loginSchema);

@@ -2,13 +2,11 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { backend } from "../App";
 
-
-
 const AddBusStopList = () => {
   const [buses, setBuses] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
   const [newBus, setNewBus] = useState({ name: "", number: "" });
-  const [newStop, setNewStop] = useState({ name: "", latitude: "", longitude: "" });
+  const [newStop, setNewStop] = useState({ name: "", latitude: "", longitude: "", coordinates: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -61,7 +59,14 @@ const AddBusStopList = () => {
 
   // Handle stop input changes
   const handleStopInputChange = (e) => {
-    setNewStop({ ...newStop, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "coordinates") {
+      const [lat, lon] = value.split(",").map((num) => num.trim());
+      setNewStop({ ...newStop, latitude: lat || "", longitude: lon || "", coordinates: value });
+    } else {
+      setNewStop({ ...newStop, [name]: value });
+    }
   };
 
   // Handle adding a stop
@@ -72,7 +77,7 @@ const AddBusStopList = () => {
     }
 
     if (!newStop.name || !newStop.latitude || !newStop.longitude) {
-      alert("Please enter Stop Name, Latitude, and Longitude.");
+      alert("Please enter Stop Name and valid Latitude & Longitude.");
       return;
     }
 
@@ -87,7 +92,7 @@ const AddBusStopList = () => {
       .then((res) => {
         setBuses(buses.map(bus => (bus._id === selectedBus._id ? res.data : bus)));
         setSelectedBus(res.data); // Update UI instantly
-        setNewStop({ name: "", latitude: "", longitude: "" }); // Reset fields
+        setNewStop({ name: "", latitude: "", longitude: "", coordinates: "" }); // Reset fields
       })
       .catch((err) => {
         console.error("Error adding stop:", err);
@@ -159,20 +164,28 @@ const AddBusStopList = () => {
               className="w-full p-2 border rounded-md"
             />
             <input
+              type="text"
+              name="coordinates"
+              placeholder="Enter 'Latitude, Longitude'"
+              value={newStop.coordinates}
+              onChange={handleStopInputChange}
+              className="w-full p-2 border rounded-md"
+            />
+            <input
               type="number"
               name="latitude"
               placeholder="Latitude"
               value={newStop.latitude}
-              onChange={handleStopInputChange}
               className="w-full p-2 border rounded-md"
+              disabled
             />
             <input
               type="number"
               name="longitude"
               placeholder="Longitude"
               value={newStop.longitude}
-              onChange={handleStopInputChange}
               className="w-full p-2 border rounded-md"
+              disabled
             />
             <button
               onClick={handleAddStop}
