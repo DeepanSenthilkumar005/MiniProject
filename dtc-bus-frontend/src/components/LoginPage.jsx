@@ -7,6 +7,7 @@ import { backend } from "../App";
 function LoginPage() {
   const [msg, setMsg] = useState("");
   const [otp, setOtp] = useState();
+  const [id, setId] = useState();
   const [checkOtp, setCheckOtp] = useState();
   const [showOtp, setShowOtp] = useState(false);
   const [show, setShow] = useState(false);
@@ -43,30 +44,55 @@ function LoginPage() {
   }
 
   async function handleClick() {
-    if (!mail || !password) {
-      setMsg("Enter all fields");
-      return;
-    }
+    if (!showOtp) {
+      if (!mail || !password) {
+        setMsg("Enter all fields");
+        return;
+      }
 
-    if (!login && confirmPassword !== password) {
-      setMsg("Passwords do not match");
-      return;
-    }
+      if (!login && confirmPassword !== password) {
+        setMsg("Passwords do not match");
+        return;
+      }
 
-    try {
-      const url = login
-        ? `${backend}/api/login/auth/${mail}/${password}`
-        : `${backend}/api/login/auth`;
+      try {
+        const url = login
+          ? `${backend}/api/login/auth/${mail}/${password}`
+          : `${backend}/api/login/auth`;
 
-      const res = login
-        ? await axios.get(url)
-        : await axios.post(url, { mail, password });
+        const res = login
+          ? await axios.get(url)
+          : await axios.post(url, { mail, password });
 
-      console.log(res.data);
-      setMsg(res.data);
-      handleClear();
-    } catch (e) {
-      console.error("Error:", e.response?.data || e.message);
+        console.log(res.data);
+        setMsg(res.data);
+        handleClear();
+      } catch (e) {
+        console.error("Error:", e.response?.data || e.message);
+      }
+    } else {
+      if (Number(otp) !== Number(checkOtp)) {
+        setMsg("OTP does not match");
+        return;
+      }
+
+      try {
+        const result = await axios.put(`${backend}/api/login/pass`, {
+          mail: mail,
+          password: password,
+        });
+
+        setMsg(result.data.message); // ✅ Now this will work properly
+        setMail("");
+        setCheckOtp();
+        setOtp();
+        setPassword("");
+        setConfirmPassword("");
+        setShow(false);
+      } catch (error) {
+        console.error("❌ Error Updating Password:", error);
+        setMsg("Failed to update password. Please try again.");
+      }
     }
   }
 
@@ -87,7 +113,8 @@ function LoginPage() {
       console.log("Search API Response:", response.data);
 
       if (response.data.success) {
-        console.log("Mail ID found");
+        console.log("✅ Mail ID found");
+        setId(response.data.id);
 
         // 🔹 If email exists, send OTP
         const res = await axios.post(`${backend}/api/send-email`, {
@@ -99,7 +126,7 @@ function LoginPage() {
         if (res.data.success) {
           setOtp(res.data.OTP); // ✅ Fix: Ensure OTP is stored properly before comparison
           console.log("Generated OTP:", res.data.OTP);
-          setMsg("OTP has been sent to your email");
+          setMsg("✅ OTP has been sent to your email");
           setShowOtp(true);
         } else {
           setMsg("Failed to send OTP. Try again.");

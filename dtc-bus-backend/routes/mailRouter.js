@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
       const result = await sendMail(email, subject, message);
   
       if (result.success) {
-        res.status(200).json({ success: true, message: "Email sent successfully route page", OTP: OTP });
+        res.status(200).json({ success: true, message: "✅ Email sent successfully", OTP: OTP });
       } else {
         res.status(500).json({ success: false, message: "Failed to send email" });
       }
