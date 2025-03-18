@@ -1,11 +1,17 @@
 const mongoose = require("mongoose");
 
-const stopSchema = new mongoose.Schema({
-  name: String,      // Stop name (e.g., "Central Bus Stand")
-  latitude: Number,  // GPS Latitude
-  longitude: Number, // GPS Longitude
-  buses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Schedule" }] // Buses using this stop
+const busSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  number: { type: String, required: true },
+  stops: [
+    {
+      name: String,
+      latitude: Number,
+      longitude: Number,
+      interval: Number, // Interval in minutes (time taken from previous stop)
+    },
+  ],
+  startTime: { type: String, required: true }, // Example: "08:00 AM"
 });
 
-const Stop = mongoose.model("Stop", stopSchema);
-module.exports = Stop;
+module.exports = mongoose.model("Bus", busSchema);
