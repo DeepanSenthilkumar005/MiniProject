@@ -40,4 +40,29 @@ router.post('/auth',async(req, res)=>{
     }
 })
 
+// Forget Password
+router.post('/search',async (req, res)=>{
+    try{
+        const {mail} = req.body;
+        console.log(mail+" in the /search");
+        
+        const result = await loginModel.findOne({mail});
+        if(!result)
+        {
+            
+            console.log("not found");
+            res.status(201).json({success:false, message:"Mail Id not Found"});
+        }
+        else{
+            console.log("found");
+            res.status(200).json({success:true, message:"Mail Id Found",mail:mail});
+        }
+    }
+    catch(e)
+    {
+        console.log("Error in the Find the Mail in the Forget Password is "+e);
+        
+    }
+})
+
 module.exports = router;

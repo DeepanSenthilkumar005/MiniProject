@@ -6,6 +6,9 @@ import { backend } from "../App";
 
 function LoginPage() {
   const [msg, setMsg] = useState("");
+  const [otp, setOtp] = useState();
+  const [checkOtp, setCheckOtp] = useState();
+  const [showOtp, setShowOtp] = useState(false);
   const [show, setShow] = useState(false);
   const [login, setLogin] = useState(true);
   const [mail, setMail] = useState("");
@@ -67,6 +70,49 @@ function LoginPage() {
     }
   }
 
+  async function handleForgetPassword() {
+    console.log("Forget Password Clicked");
+
+    if (!mail) {
+      setMsg("Enter the Mail ID");
+      return;
+    }
+
+    try {
+      // 🔹 Check if the email exists in the database
+      const response = await axios.post(`${backend}/api/login/search`, {
+        mail,
+      });
+
+      console.log("Search API Response:", response.data);
+
+      if (response.data.success) {
+        console.log("Mail ID found");
+
+        // 🔹 If email exists, send OTP
+        const res = await axios.post(`${backend}/api/send-email`, {
+          email: mail,
+        });
+
+        console.log("Email API Response:", res.data);
+
+        if (res.data.success) {
+          setOtp(res.data.OTP); // ✅ Fix: Ensure OTP is stored properly before comparison
+          console.log("Generated OTP:", res.data.OTP);
+          setMsg("OTP has been sent to your email");
+          setShowOtp(true);
+        } else {
+          setMsg("Failed to send OTP. Try again.");
+        }
+      } else {
+        setMsg(response.data.message);
+      }
+    } catch (error) {
+      console.error("❌ Error in Forget Password:", error);
+      setMsg("Something went wrong. Please try again.");
+    }
+  }
+
   return (
     <div className="flex min-h-full h-svh flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm h-fit">
@@ -86,7 +132,10 @@ function LoginPage() {
 
           {/* Email Field */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-900">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-900"
+            >
               Email address
             </label>
             <div className="mt-2">
@@ -103,15 +152,50 @@ function LoginPage() {
             </div>
           </div>
 
+          {showOtp && (
+            <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold text-gray-700 text-center mb-2">
+                Enter OTP
+              </h3>
+              <div className="flex justify-center">
+                <input
+                  type="text"
+                  maxLength="4"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="Enter OTP"
+                  className="w-32 h-12 text-center text-lg font-semibold border rounded-lg outline-none focus:ring-2 focus:ring-orange-500 tracking-widest"
+                  value={checkOtp}
+                  onChange={(e) => {
+                    const enteredOtp = e.target.value.replace(/\D/g, ""); // Allow only numbers
+                    setCheckOtp(enteredOtp.slice(0, 4)); // Limit to 4 digits
+                  }}
+                />
+              </div>
+              {otp && checkOtp && Number(otp) !== Number(checkOtp) && (
+                <p className="text-red-500 text-center mt-2">
+                  OTP does not match
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Password Field with Show/Hide */}
           <div>
             <div className="flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Password
               </label>
               {login && (
                 <div className="text-sm">
-                  <button type="button" className="font-semibold text-orange-600 hover:text-orange-500 cursor-pointer" onClick={()=>setMsg("Api Added Soon")} >
+                  <button
+                    type="button"
+                    className="font-semibold text-orange-600 hover:text-orange-500 cursor-pointer"
+                    onClick={handleForgetPassword}
+                  >
                     Forgot password?
                   </button>
                 </div>
@@ -141,7 +225,10 @@ function LoginPage() {
           {/* Confirm Password Field (Only for Register) */}
           {!login && (
             <div>
-              <label htmlFor="confirmpassword" className="block text-sm font-medium text-gray-900">
+              <label
+                htmlFor="confirmpassword"
+                className="block text-sm font-medium text-gray-900"
+              >
                 Confirm Password
               </label>
               <div className="mt-2">
@@ -156,7 +243,9 @@ function LoginPage() {
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
                 />
               </div>
-              {confirmPasswordError && <p className="text-red-500">{confirmPasswordError}</p>}
+              {confirmPasswordError && (
+                <p className="text-red-500">{confirmPasswordError}</p>
+              )}
             </div>
           )}
 

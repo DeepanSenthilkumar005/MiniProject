@@ -7,6 +7,7 @@ const busRoutes = require("./routes/busRoutes");
 const crewRoutes = require("./routes/crewRoutes");
 const routeRoutes = require("./routes/routes"); // ✅ Correct import
 const loginRoute = require("./routes/loginRoute");
+const mailRouter = require("./routes/mailRouter");
 
 dotenv.config();
 const app = express();
@@ -25,7 +26,7 @@ app.use("/api/crew", crewRoutes);
 app.use("/api/routes", routeRoutes);  // ✅ Correct usage
 app.use("/api/buses", busRoutes);     // ✅ Correct usage
 app.use("/api/login",loginRoute);
-
+app.use("/api/send-email",mailRouter);
 // Start Server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
