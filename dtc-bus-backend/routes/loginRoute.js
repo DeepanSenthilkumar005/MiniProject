@@ -55,7 +55,7 @@ router.post('/search',async (req, res)=>{
         }
         else{
             console.log("found");
-            res.status(200).json({success:true, message:"Mail Id Found",mail:mail});
+            res.status(200).json({success:true, message:"Mail Id Found",mail:mail,id:result._id});
         }
     }
     catch(e)
