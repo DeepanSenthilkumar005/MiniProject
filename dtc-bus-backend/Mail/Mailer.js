@@ -1,9 +1,9 @@
 const nodemailer = require("nodemailer");
-require('dotenv').config();
+require("dotenv").config();
 
 const sendMail = async (to, subject, text) => {
   const transporter = nodemailer.createTransport({
-    service:"gmail",
+    service: "gmail",
     host: "smtp.gmail.com",
     port: 465,
     secure: true, // true for port 465, false for other ports
@@ -14,10 +14,13 @@ const sendMail = async (to, subject, text) => {
   });
 
   const mailOptions = {
-    from: process.env.EMAIL, // ✅ Added sender email
+    from: {
+      name: "Auto-Reply",
+      address: process.env.EMAIL,
+    }, // ✅ Added sender email
     to: to,
     subject: subject,
-    text: text // ✅ Supports HTML formatting in email body
+    text: text, // ✅ Supports HTML formatting in email body
   };
 
   try {
