@@ -9,7 +9,7 @@ router.get("/auth/:mail/:password", async (req, res) => {
     if (!mailId) {
       res.status(201).json("Register your Mail");
     } else if (password === mailId.password) {
-      res.status(200).json("Valid Password");
+      res.status(200).json("✅ Valid Password");
     } else {
       res.status(200).json("Invalid Password");
     }
@@ -21,7 +21,7 @@ router.post("/auth", async (req, res) => {
   try {
     const add = new loginModel(req.body);
     await add.save();
-    res.status(200).json("SuccesfullAdded");
+    res.status(200).json("✅ Succesfull Added");
   } catch (error) {
     if (error.code === 11000) {
       res.status(400).json({ message: "Email already registered" });
@@ -47,7 +47,7 @@ router.post("/search", async (req, res) => {
         .status(200)
         .json({
           success: true,
-          message: "Mail Id Found",
+          message: "✅ Mail Id Found",
           mail: mail,
           id: result._id,
         });
@@ -67,7 +67,7 @@ router.put("/pass", async (req, res) => {
     console.log("✅ Password Changed Successfully");
     res
       .status(200)
-      .json({ success: true, message: "Password changed successfully" });
+      .json({ success: true, message: "✅ Password changed successfully" });
   } catch (error) {
     console.error("❌ Error in Change Password:", error);
     res

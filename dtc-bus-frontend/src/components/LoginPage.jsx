@@ -144,7 +144,7 @@ function LoginPage() {
     <div className="flex min-h-full h-svh flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm h-fit">
         <img
-          alt="Your Company"
+          alt="Bus360"
           src={logo}
           className="mx-auto h-10 w-auto rounded-sm"
         />
@@ -155,7 +155,7 @@ function LoginPage() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form action="#" method="POST" className="space-y-6">
-          <p className="flex justify-center text-red-500">{msg}</p>
+          <p className={`flex justify-center ${msg.includes("✅") ? "text-green-500" : "text-red-500"}`}>{msg}</p>
 
           {/* Email Field */}
           <div>
