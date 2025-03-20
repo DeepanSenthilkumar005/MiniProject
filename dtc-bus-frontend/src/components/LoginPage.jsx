@@ -63,7 +63,10 @@ function LoginPage() {
         const res = login
           ? await axios.get(url)
           : await axios.post(url, { mail, password });
-
+        if (res.data === "✅ Valid Password") {
+          sessionStorage.setItem("auth", "true"); // ✅ Store authentication status
+          window.location.href = "/"; // ✅ Redirect user after login
+        }
         console.log(res.data);
         setMsg(res.data);
         handleClear();
@@ -155,7 +158,13 @@ function LoginPage() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form action="#" method="POST" className="space-y-6">
-          <p className={`flex justify-center ${msg.includes("✅") ? "text-green-500" : "text-red-500"}`}>{msg}</p>
+          <p
+            className={`flex justify-center ${
+              msg.includes("✅") ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {msg}
+          </p>
 
           {/* Email Field */}
           <div>
