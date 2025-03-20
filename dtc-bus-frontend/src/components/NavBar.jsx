@@ -36,8 +36,8 @@ function NavBar() {
   ].filter(Boolean); // ✅ Remove `null` values from array
 
   return (
-    <nav className="z-50 rounded-b-sm shadow shadow-gray-800 bg-gradient-to-r from-[#FF512F] to-[#F09819] sticky top-0 p-4 flex justify-between items-center text-white transition-all ease-in-out duration-200">
-      <h1 className="text-xl font-bold cursor-pointer hover:scale-110 duration-300">Bus360</h1>
+    <nav className="z-50 rounded-b-sm  shadow shadow-gray-800 bg-gradient-to-r from-[#FF512F] to-[#F09819] sticky top-0 p-4 flex justify-between items-center text-white transition-all ease-in-out duration-200">
+      <h1 className="text-xl font-bold cursor-pointer hover:scale-110 duration-300" onClick={()=>{window.location.reload()}}>Bus360</h1>
 
       {/* Desktop Links */}
       <div className="hidden md:flex space-x-4">
@@ -68,7 +68,7 @@ function NavBar() {
       {isOpen && (
         <div
           ref={menuRef}
-          className="absolute w-2/3 top-15 right-0 bg-gradient-to-r from-[#F87424] to-[#F09819] text-center space-y-4 py-4 md:hidden shadow-md"
+          className="absolute w-2/3 h-svh top-15 right-0 bg-gradient-to-r from-[#F87424] to-[#F09819] text-center space-y-4 py-4 md:hidden shadow-md"
         >
           {navLinks.map((link, index) => (
             <div key={index} className="w-full flex justify-center">

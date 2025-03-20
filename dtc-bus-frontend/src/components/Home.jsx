@@ -5,7 +5,7 @@ import backgroundImage from "../assets/Home/bg.jpeg";
 const Home = () => {
   return (
     <div
-      className="text-center h-dvh sm:h-lvh p-10 flex w-full items-center relative justify-center bg-gray-100"
+      className="text-center md:h-dvh sm:h-px p-10 flex w-full items-center relative justify-center bg-gray-100"
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
