@@ -7,6 +7,8 @@ const Schedule = () => {
   const [selectedBusId, setSelectedBusId] = useState(null);
   const [busDetails, setBusDetails] = useState(null);
   const [schedule, setSchedule] = useState([]);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [departureTime, setDepartureTime] = useState(""); // User-selected departure time
 
   useEffect(() => {
     axios.get(`${backend}/api/buses`)
@@ -20,21 +22,25 @@ const Schedule = () => {
     axios.get(`${backend}/api/buses/${selectedBusId}`)
       .then(res => {
         setBusDetails(res.data);
-        calculateSchedule(res.data);
+        calculateSchedule(res.data, selectedDate, departureTime);
       })
       .catch(err => console.error("Error fetching bus details:", err));
-  }, [selectedBusId]);
+  }, [selectedBusId, selectedDate, departureTime]);
 
-  const calculateSchedule = (bus) => {
-    if (!bus || bus.stops.length === 0) return;
+  const calculateSchedule = (bus, date, time) => {
+    if (!bus || bus.stops.length === 0 || !date || !time) return;
 
-    const startTime = new Date();
-    let hr = Math.floor(1+Math.random()*12);
-    startTime.setHours(hr, 0, 0); // Start time at 8:00 AM
+    let [hours, minutes] = time.split(":").map(Number);
+    let startTime = new Date(date);
+    startTime.setHours(hours, minutes, 0);
 
     let newSchedule = bus.stops.map((stop, index) => {
       let stopTime = new Date(startTime);
-      stopTime.setMinutes(startTime.getMinutes() + index * (bus.interval || 15)); // Add interval
+
+      if (index > 0) {
+        let timeDiff = stop.timeDifference || 10; // Default 10 min if not set
+        stopTime.setMinutes(startTime.getMinutes() + timeDiff);
+      }
 
       return {
         stopName: stop.name,
@@ -49,8 +55,7 @@ const Schedule = () => {
     <div className="p-6 min-h-screen bg-gray-100 flex flex-col items-center">
       <h1 className="text-2xl font-extrabold mb-6 text-gray-800">🚍 Bus Schedule</h1>
 
-      {/* Dropdown */}
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md space-y-3">
         <select 
           className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500"
           onChange={(e) => setSelectedBusId(e.target.value)}
@@ -62,12 +67,26 @@ const Schedule = () => {
             </option>
           ))}
         </select>
+
+        <input 
+          type="date" 
+          className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500" 
+          value={selectedDate} 
+          onChange={(e) => setSelectedDate(e.target.value)}
+        />
+
+        <input 
+          type="time" 
+          className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500"
+          value={departureTime} 
+          onChange={(e) => setDepartureTime(e.target.value)}
+        />
       </div>
 
-      {busDetails && (
+      {busDetails && schedule.length > 0 && (
         <div className="w-full max-w-2xl bg-white shadow-md rounded-xl p-6 mt-6">
           <h2 className="text-lg font-semibold text-gray-700">{busDetails.name} ({busDetails.number})</h2>
-          <h3 className="text-md font-bold text-orange-500 mt-3">📅 Schedule:</h3>
+          <h3 className="text-md font-bold text-orange-500 mt-3">📅 Estimated Schedule:</h3>
           <ul className="mt-3 space-y-3">
             {schedule.map((stop, index) => (
               <li key={index} className="p-3 flex justify-between bg-gray-50 border-l-4 border-orange-500 rounded-lg shadow-sm hover:bg-gray-100 transition-all">

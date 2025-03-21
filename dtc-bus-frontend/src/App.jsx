@@ -10,6 +10,8 @@ import BusRouteMap from "./components/BusRouteMap";
 import PageNotFound from "./components/PageNotFound";
 import Login from "./components/LoginPage";
 import AddBusStopList from "./components/AddBusStopList";
+import BusTracker from "./components/BusTracker";
+import BusRouteWithETA from "./components/BusRouteWithETA";
 
 export const backend = "https://miniproject-g9lj.onrender.com";
 // export const backend = "http://localhost:8000";
@@ -25,6 +27,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/bre" element={<BusRouteWithETA />} />
+          <Route path="/track" element={<BusTracker/>} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/routes" element={<RoutesPage />} />
           <Route path="/crew" element={<Crew />} />

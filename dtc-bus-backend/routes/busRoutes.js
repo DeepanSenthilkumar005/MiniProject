@@ -3,38 +3,38 @@ const Bus = require("../models/Bus");
 
 const router = express.Router();
 
-// Route to Search for Bus Routes
+// ✅ Route to Search for Bus Routes
 router.get("/search", async (req, res) => {
   const { start, destination } = req.query;
 
   if (!start || !destination) {
-      return res.status(400).json({ message: "Start and destination are required." });
+    return res.status(400).json({ message: "Start and destination are required." });
   }
 
   try {
-      const routes = await Route.find({
-          stops: { $all: [start, destination] } // Ensures both start and destination are in the route
-      });
+    // Find all buses that include both start and destination stops
+    const buses = await Bus.find({
+      "stops.name": { $all: [start, destination] }
+    });
 
-      // Filter routes where the destination appears after the start point
-      const filteredRoutes = routes.filter(route => {
-          const startIndex = route.stops.indexOf(start);
-          const destinationIndex = route.stops.indexOf(destination);
-          return startIndex !== -1 && destinationIndex !== -1 && startIndex < destinationIndex;
-      });
+    // Filter to ensure destination appears after start
+    const filteredBuses = buses.filter(bus => {
+      const startIndex = bus.stops.findIndex(stop => stop.name === start);
+      const destinationIndex = bus.stops.findIndex(stop => stop.name === destination);
+      return startIndex !== -1 && destinationIndex !== -1 && startIndex < destinationIndex;
+    });
 
-      if (filteredRoutes.length === 0) {
-          return res.status(404).json({ message: "No available routes found." });
-      }
+    if (filteredBuses.length === 0) {
+      return res.status(404).json({ message: "No available routes found." });
+    }
 
-      res.json(filteredRoutes);
+    res.json(filteredBuses);
   } catch (error) {
-      res.status(500).json({ message: "Error fetching routes", error: error.message });
+    res.status(500).json({ message: "Error fetching routes", error: error.message });
   }
 });
 
-
-// POST: Add a new bus
+// ✅ POST: Add a new bus
 router.post("/", async (req, res) => {
   try {
     const { name, number, stops } = req.body;
@@ -70,21 +70,19 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
+// ✅ POST: Add a stop to a specific bus
 router.post("/:id/add-stop", async (req, res) => {
   try {
-      const { name, latitude, longitude } = req.body;
-      const bus = await Bus.findById(req.params.id);
-      if (!bus) return res.status(404).json({ message: "Bus not found" });
+    const { name, latitude, longitude, timeDifference } = req.body;
+    const bus = await Bus.findById(req.params.id);
+    if (!bus) return res.status(404).json({ message: "Bus not found" });
 
-      bus.stops.push({ name, latitude, longitude }); // Add stop to array
-      await bus.save();
-      res.json(bus);
+    bus.stops.push({ name, latitude, longitude, timeDifference: timeDifference || 10 }); // Default to 10 mins
+    await bus.save();
+    res.json(bus);
   } catch (error) {
-      res.status(500).json({ message: "Error adding stop", error: error.message });
+    res.status(500).json({ message: "Error adding stop", error: error.message });
   }
 });
-
-
 
 module.exports = router;

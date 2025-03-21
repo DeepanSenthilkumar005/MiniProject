@@ -6,7 +6,13 @@ const AddBusStopList = () => {
   const [buses, setBuses] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
   const [newBus, setNewBus] = useState({ name: "", number: "" });
-  const [newStop, setNewStop] = useState({ name: "", latitude: "", longitude: "", coordinates: "" });
+  const [newStop, setNewStop] = useState({
+    name: "",
+    latitude: "",
+    longitude: "",
+    coordinates: "",
+    timeDifference: "0", // ✅ Default value to prevent NaN issues
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -63,9 +69,17 @@ const AddBusStopList = () => {
 
     if (name === "coordinates") {
       const [lat, lon] = value.split(",").map((num) => num.trim());
-      setNewStop({ ...newStop, latitude: lat || "", longitude: lon || "", coordinates: value });
+      setNewStop({
+        ...newStop,
+        latitude: lat || "",
+        longitude: lon || "",
+        coordinates: value,
+      });
     } else {
-      setNewStop({ ...newStop, [name]: value });
+      setNewStop({
+        ...newStop,
+        [name]: name === "timeDifference" ? Math.max(2, parseInt(value) || 0) : value, // ✅ Ensure min 2 minutes
+      });
     }
   };
 
@@ -76,8 +90,8 @@ const AddBusStopList = () => {
       return;
     }
 
-    if (!newStop.name || !newStop.latitude || !newStop.longitude) {
-      alert("Please enter Stop Name and valid Latitude & Longitude.");
+    if (!newStop.name || !newStop.latitude || !newStop.longitude || !newStop.timeDifference) {
+      alert("Please enter Stop Name, Latitude, Longitude, and Time Difference.");
       return;
     }
 
@@ -85,14 +99,15 @@ const AddBusStopList = () => {
       name: newStop.name,
       latitude: parseFloat(newStop.latitude),
       longitude: parseFloat(newStop.longitude),
+      timeDifference: parseInt(newStop.timeDifference, 10) || 10, // ✅ Default to 10 minutes
     };
 
     axios
       .post(`${backend}/api/buses/${selectedBus._id}/add-stop`, stopData)
       .then((res) => {
-        setBuses(buses.map(bus => (bus._id === selectedBus._id ? res.data : bus)));
-        setSelectedBus(res.data); // Update UI instantly
-        setNewStop({ name: "", latitude: "", longitude: "", coordinates: "" }); // Reset fields
+        setBuses(buses.map((bus) => (bus._id === selectedBus._id ? res.data : bus)));
+        setSelectedBus(res.data); // ✅ Update selected bus
+        setNewStop({ name: "", latitude: "", longitude: "", coordinates: "", timeDifference: "0" }); // Reset fields
       })
       .catch((err) => {
         console.error("Error adding stop:", err);
@@ -123,10 +138,7 @@ const AddBusStopList = () => {
           onChange={handleBusInputChange}
           className="w-full p-2 border rounded-md"
         />
-        <button
-          onClick={handleAddBus}
-          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-        >
+        <button onClick={handleAddBus} className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
           Add Bus
         </button>
       </div>
@@ -155,42 +167,13 @@ const AddBusStopList = () => {
         <div className="mt-6">
           <h2 className="text-lg font-bold mb-2">Add Stop to {selectedBus.name}</h2>
           <div className="space-y-2">
-            <input
-              type="text"
-              name="name"
-              placeholder="Stop Name"
-              value={newStop.name}
-              onChange={handleStopInputChange}
-              className="w-full p-2 border rounded-md"
-            />
-            <input
-              type="text"
-              name="coordinates"
-              placeholder="Enter 'Latitude, Longitude'"
-              value={newStop.coordinates}
-              onChange={handleStopInputChange}
-              className="w-full p-2 border rounded-md"
-            />
-            <input
-              type="number"
-              name="latitude"
-              placeholder="Latitude"
-              value={newStop.latitude}
-              className="w-full p-2 border rounded-md"
-              disabled
-            />
-            <input
-              type="number"
-              name="longitude"
-              placeholder="Longitude"
-              value={newStop.longitude}
-              className="w-full p-2 border rounded-md"
-              disabled
-            />
-            <button
-              onClick={handleAddStop}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-            >
+            <input type="text" name="name" placeholder="Stop Name" value={newStop.name} onChange={handleStopInputChange} className="w-full p-2 border rounded-md" />
+            <input type="text" name="coordinates" placeholder="Enter 'Latitude, Longitude'" value={newStop.coordinates} onChange={handleStopInputChange} className="w-full p-2 border rounded-md" />
+            <input type="number" name="latitude" placeholder="Latitude" value={newStop.latitude} className="w-full p-2 border rounded-md" disabled />
+            <input type="number" name="longitude" placeholder="Longitude" value={newStop.longitude} className="w-full p-2 border rounded-md" disabled />
+            <input type="number" name="timeDifference" placeholder="Time Difference (in minutes)" value={newStop.timeDifference} onChange={handleStopInputChange} className="w-full p-2 border rounded-md" min={2} />
+
+            <button onClick={handleAddStop} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
               Add Stop
             </button>
           </div>
@@ -199,7 +182,7 @@ const AddBusStopList = () => {
           <ul className="mt-2 space-y-2">
             {selectedBus.stops.map((stop, index) => (
               <li key={index} className="p-2 bg-gray-200 rounded-md">
-                📍 {stop.name} ({stop.latitude}, {stop.longitude})
+                📍 {stop.name} ({stop.latitude}, {stop.longitude}) - ⏳ {stop.timeDifference} min
               </li>
             ))}
           </ul>
