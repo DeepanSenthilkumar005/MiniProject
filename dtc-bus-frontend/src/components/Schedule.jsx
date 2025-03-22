@@ -1,104 +1,117 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { backend } from "../App";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { backend } from '../App';
 
 const Schedule = () => {
-  const [buses, setBuses] = useState([]);
-  const [selectedBusId, setSelectedBusId] = useState(null);
-  const [busDetails, setBusDetails] = useState(null);
-  const [schedule, setSchedule] = useState([]);
-  const [selectedDate, setSelectedDate] = useState("");
-  const [departureTime, setDepartureTime] = useState(""); // User-selected departure time
+    const [schedules, setSchedules] = useState([]);
+    const [buses, setBuses] = useState([]);
+    const [routes, setRoutes] = useState([]);
+    const [busId, setBusId] = useState('');
+    const [routeId, setRouteId] = useState('');
+    const [departureTime, setDepartureTime] = useState('');
 
-  useEffect(() => {
-    axios.get(`${backend}/api/buses`)
-      .then(res => setBuses(res.data))
-      .catch(err => console.error("Error fetching buses:", err));
-  }, []);
+    useEffect(() => {
+        const fetchSchedules = async () => {
+            const response = await axios.get(`${backend}/api/schedules`);
+            setSchedules(response.data);
+        };
 
-  useEffect(() => {
-    if (!selectedBusId) return;
+        const fetchBuses = async () => {
+            const response = await axios.get(`${backend}/api/buses`);
+            setBuses(response.data);
+        };
 
-    axios.get(`${backend}/api/buses/${selectedBusId}`)
-      .then(res => {
-        setBusDetails(res.data);
-        calculateSchedule(res.data, selectedDate, departureTime);
-      })
-      .catch(err => console.error("Error fetching bus details:", err));
-  }, [selectedBusId, selectedDate, departureTime]);
+        const fetchRoutes = async () => {
+            const response = await axios.get(`${backend}/api/routes`);
+            setRoutes(response.data);
+        };
 
-  const calculateSchedule = (bus, date, time) => {
-    if (!bus || bus.stops.length === 0 || !date || !time) return;
+        fetchSchedules();
+        fetchBuses();
+        fetchRoutes();
+    }, []);
 
-    let [hours, minutes] = time.split(":").map(Number);
-    let startTime = new Date(date);
-    startTime.setHours(hours, minutes, 0);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post(`${backend}/api/schedules`, { busId, routeId, departureTime });
+            alert('Schedule added successfully!');
+            const response = await axios.get(`${backend}/api/schedules`);
+            setSchedules(response.data);
+        } catch (error) {
+            console.error('Error adding schedule:', error);
+        }
+    };
 
-    let newSchedule = bus.stops.map((stop, index) => {
-      let stopTime = new Date(startTime);
-
-      if (index > 0) {
-        let timeDiff = stop.timeDifference || 10; // Default 10 min if not set
-        stopTime.setMinutes(startTime.getMinutes() + timeDiff);
-      }
-
-      return {
-        stopName: stop.name,
-        time: stopTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true }),
-      };
-    });
-
-    setSchedule(newSchedule);
-  };
-
-  return (
-    <div className="p-6 min-h-screen bg-gray-100 flex flex-col items-center">
-      <h1 className="text-2xl font-extrabold mb-6 text-gray-800">🚍 Bus Schedule</h1>
-
-      <div className="w-full max-w-md space-y-3">
-        <select 
-          className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500"
-          onChange={(e) => setSelectedBusId(e.target.value)}
-        >
-          <option value="">-- Select a Bus --</option>
-          {buses.map(bus => (
-            <option key={bus._id} value={bus._id}>
-              {bus.name} (Bus No: {bus.number})
-            </option>
-          ))}
-        </select>
-
-        <input 
-          type="date" 
-          className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500" 
-          value={selectedDate} 
-          onChange={(e) => setSelectedDate(e.target.value)}
-        />
-
-        <input 
-          type="time" 
-          className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500"
-          value={departureTime} 
-          onChange={(e) => setDepartureTime(e.target.value)}
-        />
-      </div>
-
-      {busDetails && schedule.length > 0 && (
-        <div className="w-full max-w-2xl bg-white shadow-md rounded-xl p-6 mt-6">
-          <h2 className="text-lg font-semibold text-gray-700">{busDetails.name} ({busDetails.number})</h2>
-          <h3 className="text-md font-bold text-orange-500 mt-3">📅 Estimated Schedule:</h3>
-          <ul className="mt-3 space-y-3">
-            {schedule.map((stop, index) => (
-              <li key={index} className="p-3 flex justify-between bg-gray-50 border-l-4 border-orange-500 rounded-lg shadow-sm hover:bg-gray-100 transition-all">
-                <span className="font-medium text-gray-700">🚌 {stop.stopName}</span>
-                <span className="font-semibold text-gray-900">{stop.time}</span>
-              </li>
-            ))}
-          </ul>
+    return (
+        <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+            <h1 className="text-2xl font-bold text-gray-800 mb-4">Bus Schedules</h1>
+            <form className="mb-6" onSubmit={handleSubmit}>
+                <div className="mb-4">
+                    <label htmlFor="bus" className="block text-sm font-medium text-gray-700">Bus:</label>
+                    <select
+                        id="bus"
+                        value={busId}
+                        onChange={(e) => setBusId(e.target.value)}
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+                    >
+                        <option value="">Select Bus</option>
+                        {buses.map(bus => (
+                            <option key={bus._id} value={bus._id}>{bus.busNumber}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="route" className="block text-sm font-medium text-gray-700">Route:</label>
+                    <select
+                        id="route"
+                        value={routeId}
+                        onChange={(e) => setRouteId(e.target.value)}
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+                    >
+                        <option value="">Select Route</option>
+                        {routes.map(route => (
+                            <option key={route._id} value={route._id}>{route.startPoint} to {route.endPoint}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="departureTime" className="block text-sm font-medium text-gray-700">Departure Time:</label>
+                    <input
+                        type="datetime-local"
+                        id="departureTime"
+                        value={departureTime}
+                        onChange={(e) => setDepartureTime(e.target.value)}
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+                    />
+                </div>
+                <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition duration-200"
+                >
+                    Add Schedule
+                </button>
+            </form>
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">Current Schedules</h2>
+            <ul className="space-y-4">
+                {schedules.map(schedule => (
+                    <li key={schedule._id} className="bg-gray-100 p-4 rounded-md shadow">
+                        <div className="font-bold text-gray-800">
+                            Bus: {schedule.busId.busNumber} - Route: {schedule.routeId.startPoint} to {schedule.routeId.endPoint} - Departure: {new Date(schedule.departureTime).toLocaleString()}
+                        </div>
+                        <ul className="mt-2">
+                            {schedule.schedule.map((stop, index) => (
+                                <li key={index} className="text-gray-600">{stop.stop}: {stop.time}</li>
+                            ))}
+                        </ul>
+                    </li>
+                ))}
+            </ul>
         </div>
-      )}
-    </div>
-  );
+    );
 };
 
 export default Schedule;

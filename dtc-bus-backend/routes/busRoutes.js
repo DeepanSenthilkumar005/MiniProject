@@ -85,4 +85,35 @@ router.post("/:id/add-stop", async (req, res) => {
   }
 });
 
+router.put('/:busId/stops/:stopId', async (req, res) => {
+  try {
+    const busId = req.params.busId;
+    const stopId = req.params.stopId;
+    const stopData = req.body;
+    const bus = await Bus.findOneAndUpdate(
+      { _id: busId, 'stops._id': stopId },
+      { $set: { 'stops.$': stopData } },
+      { new: true }
+    );
+    res.json(bus);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to update bus stop' });
+  }
+});
+
+// Delete a bus stop
+router.delete('/:busId/stops/:stopId', async (req, res) => {
+  try {
+    const busId = req.params.busId;
+    const stopId = req.params.stopId;
+    const bus = await Bus.findByIdAndUpdate(busId, { $pull: { stops: { _id: stopId } } }, { new: true });
+    res.json(bus);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to delete bus stop' });
+  }
+});
+
+
 module.exports = router;

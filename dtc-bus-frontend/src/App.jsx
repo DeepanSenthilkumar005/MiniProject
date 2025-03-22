@@ -12,8 +12,8 @@ import Login from "./components/LoginPage";
 import AddBusStopList from "./components/AddBusStopList";
 import BusTracker from "./components/BusTracker";
 
-export const backend = "https://miniproject-g9lj.onrender.com";
-// export const backend = "http://localhost:8000";
+// export const backend = "https://miniproject-g9lj.onrender.com";
+export const backend = "http://localhost:8000";
 
 function App() {
 

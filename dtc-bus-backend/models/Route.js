@@ -1,17 +1,8 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const RouteSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    stops: { type: [String], required: true },
-    buses: [
-        {
-            busNumber: { type: String, required: true },
-            timings: { type: String, required: true }, // Example: "08:00 AM - 10:00 AM"
-            busType: { type: String, default: "Regular" } // Example: Express, AC, etc.
-        }
-    ],
-    timings: { type: [Number], required: true }, // Time gaps between each stop
-    haltTimes: { type: [Number], required: true } // Halt duration at each stop (in mins)
+const routeSchema = new mongoose.Schema({
+    busName:{type:String,required:true},
+    busNumber:{type:String,required:true,unique:true},
 });
 
-module.exports = mongoose.model("Route", RouteSchema);
+module.exports = mongoose.model('Route', routeSchema);

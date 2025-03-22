@@ -1,17 +1,11 @@
-const mongoose = require("mongoose");
+// models/Schedule.js
+const mongoose = require('mongoose');
 
-const busSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  number: { type: String, required: true },
-  stops: [
-    {
-      name: String,
-      latitude: Number,
-      longitude: Number,
-      interval: Number, // Interval in minutes (time taken from previous stop)
-    },
-  ],
-  startTime: { type: String, required: true }, // Example: "08:00 AM"
+const scheduleSchema = new mongoose.Schema({
+    busId: { type: mongoose.Schema.Types.ObjectId, ref: 'Bus', required: true },
+    routeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Route', required: true },
+    departureTime: { type: Date, required: true },
+    schedule: { type: Array, required: true }, // Adjust based on your schedule structure
 });
 
-module.exports = mongoose.model("Bus", busSchema);
+module.exports = mongoose.model('Schedule', scheduleSchema);
