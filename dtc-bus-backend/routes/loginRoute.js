@@ -9,7 +9,7 @@ router.get("/auth/:mail/:password", async (req, res) => {
     if (!mailId) {
       res.status(201).json("Register your Mail");
     } else if (password === mailId.password) {
-      res.status(200).json("✅ Valid Password");
+      res.status(200).json({msg:"✅ Valid Password",role:mailId.role});
     } else {
       res.status(200).json("Invalid Password");
     }

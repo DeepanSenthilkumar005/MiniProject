@@ -68,123 +68,145 @@ const Schedule = () => {
   };
 
   const toggleSchedule = (scheduleId) => {
-    setSelectedScheduleId((prevId) => (prevId === scheduleId ? null : scheduleId));
+    setSelectedScheduleId((prevId) =>
+      prevId === scheduleId ? null : scheduleId
+    );
   };
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">🚌 Bus Schedules</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-4">
+        🚌 Bus Schedules
+      </h1>
 
       {/* Add Schedule Form */}
-      <form className="mb-6" onSubmit={handleSubmit}>
-        {/* Select Route */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Route:</label>
-          <select
-            value={routeId}
-            onChange={(e) => setRouteId(e.target.value)}
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
-          >
-            <option value="">-- Select Route --</option>
-            {routes.map((route) => (
-              <option key={route._id} value={route._id}>
-                {route.name} (Route No: {route.number})
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Select Bus */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Bus:</label>
-          <select
-            value={busId}
-            onChange={(e) => setBusId(e.target.value)}
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
-          >
-            <option value="">-- Select Bus --</option>
-            {buses.map((bus) => (
-              <option key={bus._id} value={bus._id}>
-                {bus.busName} ({bus.busNumber})
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Select Driver */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Driver:</label>
-          <select
-            value={driverId}
-            onChange={(e) => setDriverId(e.target.value)}
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
-          >
-            <option value="">-- Select Driver --</option>
-            {crewMembers
-              .filter((member) => member.role === "Driver")
-              .map((driver) => (
-                <option key={driver._id} value={driver._id}>
-                  {driver.name}
+      {sessionStorage.getItem("role")==="Admin" && (
+        <form className="mb-6" onSubmit={handleSubmit}>
+          {/* Select Route */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Route:
+            </label>
+            <select
+              value={routeId}
+              onChange={(e) => setRouteId(e.target.value)}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+            >
+              <option value="">-- Select Route --</option>
+              {routes.map((route) => (
+                <option key={route._id} value={route._id}>
+                  {route.name} (Route No: {route.number})
                 </option>
               ))}
-          </select>
-        </div>
+            </select>
+          </div>
 
-        {/* Select Conductor */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Conductor:</label>
-          <select
-            value={conductorId}
-            onChange={(e) => setConductorId(e.target.value)}
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
-          >
-            <option value="">-- Select Conductor --</option>
-            {crewMembers
-              .filter((member) => member.role === "Conductor")
-              .map((conductor) => (
-                <option key={conductor._id} value={conductor._id}>
-                  {conductor.name}
+          {/* Select Bus */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Bus:
+            </label>
+            <select
+              value={busId}
+              onChange={(e) => setBusId(e.target.value)}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+            >
+              <option value="">-- Select Bus --</option>
+              {buses.map((bus) => (
+                <option key={bus._id} value={bus._id}>
+                  {bus.busName} ({bus.busNumber})
                 </option>
               ))}
-          </select>
-        </div>
+            </select>
+          </div>
 
-        {/* Departure Time */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Departure Time:</label>
-          <input
-            type="datetime-local"
-            value={departureTime}
-            onChange={(e) => setDepartureTime(e.target.value)}
-            required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
-          />
-        </div>
+          {/* Select Driver */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Driver:
+            </label>
+            <select
+              value={driverId}
+              onChange={(e) => setDriverId(e.target.value)}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+            >
+              <option value="">-- Select Driver --</option>
+              {crewMembers
+                .filter((member) => member.role === "Driver")
+                .map((driver) => (
+                  <option key={driver._id} value={driver._id}>
+                    {driver.name}
+                  </option>
+                ))}
+            </select>
+          </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition duration-200"
-        >
-          ➕ Add Schedule
-        </button>
-      </form>
+          {/* Select Conductor */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Conductor:
+            </label>
+            <select
+              value={conductorId}
+              onChange={(e) => setConductorId(e.target.value)}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+            >
+              <option value="">-- Select Conductor --</option>
+              {crewMembers
+                .filter((member) => member.role === "Conductor")
+                .map((conductor) => (
+                  <option key={conductor._id} value={conductor._id}>
+                    {conductor.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          {/* Departure Time */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Departure Time:
+            </label>
+            <input
+              type="datetime-local"
+              value={departureTime}
+              onChange={(e) => setDepartureTime(e.target.value)}
+              required
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition duration-200"
+          >
+            ➕ Add Schedule
+          </button>
+        </form>
+      )}
 
       {/* Display Current Schedules */}
-      <h2 className="text-xl font-semibold text-gray-800 mb-2">📅 Current Schedules</h2>
+      <h2 className="text-xl font-semibold text-gray-800 mb-2">
+        📅 Current Schedules
+      </h2>
       {schedules.length === 0 ? (
         <p className="text-gray-500">No schedules available.</p>
       ) : (
         <ul className="space-y-4">
           {schedules.map((schedule) => (
-            <li key={schedule._id} className="bg-gray-100 p-4 rounded-md shadow">
+            <li
+              key={schedule._id}
+              className="bg-gray-100 p-4 rounded-md shadow"
+            >
               <div className="font-bold text-gray-800">
-                🚌 {schedule.busId?.busName} (Bus No: {schedule.busId?.busNumber}) <br />
-                📍 Route: {schedule.routeId?.name} <br />
-                ⏰ Departure: {new Date(schedule.departureTime).toLocaleString()} <br />
+                🚌 {schedule.busId?.busName} (Bus No:{" "}
+                {schedule.busId?.busNumber}) <br />
+                📍 Route: {schedule.routeId?.name} <br />⏰ Departure:{" "}
+                {new Date(schedule.departureTime).toLocaleString()} <br />
                 👨‍✈️ Driver: {schedule.driverId?.name || "Not Assigned"} <br />
                 🎟️ Conductor: {schedule.conductorId?.name || "Not Assigned"}
               </div>

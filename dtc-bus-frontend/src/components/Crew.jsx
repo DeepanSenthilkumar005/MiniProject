@@ -57,9 +57,9 @@ const Crew = () => {
       <h2 className="text-2xl font-bold mb-4 text-center">🚍 Bus Crew Members</h2>
 
       {/* Crew Form */}
-      <div className="bg-white p-4 rounded-lg shadow-md mb-6">
+      {!!sessionStorage.getItem("auth") && <div className="bg-white p-4 rounded-lg shadow-md mb-6">
         <h3 className="text-lg font-semibold mb-3">➕ Add Crew Member</h3>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="grid sm:grid-cols-1 md:grid-cols-2 md:gap-4">
           <input
             type="text"
             name="name"
@@ -107,7 +107,7 @@ const Crew = () => {
             Add Crew Member
           </button>
         </form>
-      </div>
+      </div>}
 
       {/* Crew List */}
       {crewMembers.length > 0 ? (

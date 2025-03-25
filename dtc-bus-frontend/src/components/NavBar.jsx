@@ -5,21 +5,27 @@ import { IoMdClose } from "react-icons/io";
 
 function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem("auth"));
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!sessionStorage.getItem("auth")
+  );
   const menuRef = useRef(null);
   const location = useLocation(); // Get current route
 
   // ✅ Listen for sessionStorage changes (Auth Status)
   useEffect(() => {
-    const updateAuthStatus = () => setIsAuthenticated(!!sessionStorage.getItem("auth"));
+    const updateAuthStatus = () =>
+      setIsAuthenticated(!!sessionStorage.getItem("auth"));
     window.addEventListener("storage", updateAuthStatus);
     return () => window.removeEventListener("storage", updateAuthStatus);
   }, []);
 
   // ✅ Logout function
   const handleLogout = () => {
-    sessionStorage.removeItem("auth");
-    setIsAuthenticated(false);
+    if (window.confirm("Are you sure wnat to logout")) {
+      sessionStorage.removeItem("auth");
+      sessionStorage.removeItem("role");
+      setIsAuthenticated(false);
+    }
   };
 
   // Navigation Links (Dynamically Update Based on Auth)
@@ -28,7 +34,7 @@ function NavBar() {
     { path: "/schedule", label: "Schedule" },
     { path: "/routes", label: "Routes" },
     { path: "/crew", label: "Crew" },
-    { path: "/buses", label: "Bus Map" },
+    { path: "/buses", label: "Route Map" },
     isAuthenticated && { path: "/add/busstoplist", label: "Add Bus" }, // ✅ Show only if logged in
     isAuthenticated
       ? { path: "/login", label: "Logout", action: handleLogout } // ✅ Logout button
@@ -37,7 +43,14 @@ function NavBar() {
 
   return (
     <nav className="z-50 rounded-b-sm  shadow shadow-gray-800 bg-gradient-to-r from-[#FF512F] to-[#F09819] sticky top-0 p-4 flex justify-between items-center text-white transition-all ease-in-out duration-200">
-      <h1 className="text-xl font-bold cursor-pointer hover:scale-110 duration-300" onClick={()=>{window.location.reload()}}>Bus360</h1>
+      <h1
+        className="text-xl font-bold cursor-pointer hover:scale-110 duration-300"
+        onClick={() => {
+          window.location.reload();
+        }}
+      >
+        Bus360-{sessionStorage.getItem("role")}
+      </h1>
 
       {/* Desktop Links */}
       <div className="hidden md:flex space-x-4">
@@ -79,7 +92,9 @@ function NavBar() {
                   setIsOpen(false);
                 }}
                 className={`block font-medium px-3 py-2 w-fit rounded-md ${
-                  location.pathname === link.path ? "bg-yellow-300 text-black rounded-md" : "hover:text-yellow-300"
+                  location.pathname === link.path
+                    ? "bg-yellow-300 text-black rounded-md"
+                    : "hover:text-yellow-300"
                 }`}
               >
                 {link.label}
