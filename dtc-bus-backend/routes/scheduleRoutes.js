@@ -3,11 +3,17 @@ const router = express.Router();
 const Schedule = require("../models/Schedule");
 const Bus = require("../models/Bus");
 const Route = require("../models/Route");
+const Crew = require("../models/Crew"); // ✅ Import Crew Model
 
 // ✅ Get All Schedules
 router.get("/", async (req, res) => {
   try {
-    const schedules = await Schedule.find().populate("busId").populate("routeId");
+    const schedules = await Schedule.find()
+      .populate("busId")
+      .populate("routeId")
+      .populate("driverId") // ✅ Populate Driver Details
+      .populate("conductorId"); // ✅ Populate Conductor Details
+
     res.json(schedules);
   } catch (error) {
     res.status(500).json({ message: "Error fetching schedules", error: error.message });
@@ -17,14 +23,16 @@ router.get("/", async (req, res) => {
 // ✅ Add a New Schedule
 router.post("/", async (req, res) => {
   try {
-    const { busId, routeId, departureTime } = req.body;
+    const { busId, routeId, driverId, conductorId, departureTime } = req.body;
 
-    // Check if bus and route exist
+    // Check if bus, route, driver, and conductor exist
     const bus = await Bus.findById(busId);
     const route = await Route.findById(routeId);
+    const driver = await Crew.findById(driverId);
+    const conductor = await Crew.findById(conductorId);
 
-    if (!bus || !route) {
-      return res.status(404).json({ message: "Bus or Route not found" });
+    if (!bus || !route || !driver || !conductor) {
+      return res.status(404).json({ message: "Bus, Route, Driver, or Conductor not found" });
     }
 
     // Ensure route has stops
@@ -47,6 +55,8 @@ router.post("/", async (req, res) => {
     const newSchedule = new Schedule({
       busId,
       routeId,
+      driverId, // ✅ Save Driver ID
+      conductorId, // ✅ Save Conductor ID
       departureTime,
       schedule,
     });
