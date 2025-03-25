@@ -1,10 +1,18 @@
+
 const mongoose = require("mongoose");
 
-const routeSchema = new mongoose.Schema({
-  routeNumber: { type: Number, required: true }, // Route Number (Not Unique)
-  busId: { type: mongoose.Schema.Types.ObjectId, ref: "Bus", required: true }, // Reference to Bus Model
-  busName: { type: String, required: true }, // Bus Name
-  busNumber: { type: String, required: true }, // Bus Number
+const StopSchema = new mongoose.Schema({
+  name: String,
+  latitude: Number,
+  longitude: Number,
+  timeDifference: { type: Number, default: 5 } // Time difference in minutes
 });
 
-module.exports = mongoose.model("Route", routeSchema);
+const RouteSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+  stops: [StopSchema]
+});
+
+const Routes = mongoose.model("Route", RouteSchema);
+module.exports = Routes;

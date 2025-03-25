@@ -15,7 +15,7 @@ const BusMap = ({ selectedBusId }) => {
     if (!selectedBusId) return;
 
     axios
-      .get(`${backend}/api/buses/${selectedBusId}`)
+      .get(`${backend}/api/routes/${selectedBusId}`)
       .then((res) => {
         setBus(res.data);
 

@@ -1,17 +1,8 @@
 const mongoose = require("mongoose");
 
-const StopSchema = new mongoose.Schema({
-  name: String,
-  latitude: Number,
-  longitude: Number,
-  timeDifference: { type: Number, default: 5 } // Time difference in minutes
+const busSchema = new mongoose.Schema({
+  busName: { type: String, required: true }, // Bus Name
+  busNumber: { type: String, required: true }, // Bus Number
 });
 
-const BusSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-  stops: [StopSchema]
-});
-
-const Bus = mongoose.model("Bus", BusSchema);
-module.exports = Bus;
+module.exports = mongoose.model("Bus", busSchema);

@@ -25,7 +25,7 @@ const AddBusStopList = () => {
 
   const fetchBuses = () => {
     axios
-      .get(`${backend}/api/buses`)
+      .get(`${backend}/api/routes`)
       .then((res) => {
         setBuses(res.data);
         setLoading(false);
@@ -50,7 +50,7 @@ const AddBusStopList = () => {
     }
 
     axios
-      .post(`${backend}/api/buses/`, newBus)
+      .post(`${backend}/api/routes/`, newBus)
       .then((res) => {
         setBuses([...buses, res.data]); // Update UI instantly
         setNewBus({ name: "", number: "" }); // Reset input fields
@@ -115,7 +115,7 @@ const AddBusStopList = () => {
     };
 
     axios
-      .post(`${backend}/api/buses/${selectedBus._id}/add-stop`, stopData)
+      .post(`${backend}/api/routes/${selectedBus._id}/add-stop`, stopData)
       .then((res) => {
         setBuses(
           buses.map((bus) => (bus._id === selectedBus._id ? res.data : bus))
@@ -164,7 +164,7 @@ const AddBusStopList = () => {
 
     axios
       .put(
-        `${backend}/api/buses/${selectedBus._id}/stops/${editingStop._id}`,
+        `${backend}/api/routes/${selectedBus._id}/stops/${editingStop._id}`,
         updatedStopData
       )
       .then((res) => {
@@ -195,7 +195,7 @@ const AddBusStopList = () => {
     }
     if (window.confirm("Are you Sure want to Delete")) {
       axios
-        .delete(`${backend}/api/buses/${selectedBus._id}/stops/${stopId}`)
+        .delete(`${backend}/api/routes/${selectedBus._id}/stops/${stopId}`)
         .then((res) => {
           setBuses(
             buses.map((bus) => (bus._id === selectedBus._id ? res.data : bus))

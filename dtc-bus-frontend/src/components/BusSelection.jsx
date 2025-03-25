@@ -7,7 +7,7 @@ const BusSelection = () => {
   const [buses, setBuses] = useState([]);
   const [selectedBusId, setSelectedBusId] = useState(null);
   useEffect(() => {
-    axios.get(`${backend}/api/buses`)
+    axios.get(`${backend}/api/routes`)
       .then(res => setBuses(res.data))
       .catch(err => console.error(err));
   }, []);

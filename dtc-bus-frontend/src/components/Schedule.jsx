@@ -9,6 +9,7 @@ const Schedule = () => {
   const [busId, setBusId] = useState("");
   const [routeId, setRouteId] = useState("");
   const [departureTime, setDepartureTime] = useState("");
+  const [selectedScheduleId, setSelectedScheduleId] = useState(null); // ✅ Track selected schedule
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,9 +20,9 @@ const Schedule = () => {
           axios.get(`${backend}/api/routes`),
         ]);
 
-        setSchedules(scheduleRes.data);
-        setBuses(busRes.data);
-        setRoutes(routeRes.data);
+        setSchedules(scheduleRes.data || []);
+        setBuses(busRes.data || []);
+        setRoutes(routeRes.data || []);
 
         console.log("✅ Schedules:", scheduleRes.data);
         console.log("✅ Buses:", busRes.data);
@@ -42,16 +43,24 @@ const Schedule = () => {
     }
 
     try {
-      await axios.post(`${backend}/api/schedules`, { busId, routeId, departureTime });
+      await axios.post(`${backend}/api/schedules`, {
+        busId,
+        routeId,
+        departureTime,
+      });
       alert("✅ Schedule added successfully!");
 
       // Fetch updated schedules
       const response = await axios.get(`${backend}/api/schedules`);
-      setSchedules(response.data);
+      setSchedules(response.data || []);
     } catch (error) {
       console.error("❌ Error adding schedule:", error);
       alert("❌ Failed to add schedule.");
     }
+  };
+
+  const toggleSchedule = (scheduleId) => {
+    setSelectedScheduleId((prevId) => (prevId === scheduleId ? null : scheduleId));
   };
 
   return (
@@ -60,19 +69,20 @@ const Schedule = () => {
 
       {/* Add Schedule Form */}
       <form className="mb-6" onSubmit={handleSubmit}>
+        {/* Select Route */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Route:</label>
           <select
-            value={busId}
+            value={routeId}
             onChange={(e) => setRouteId(e.target.value)}
             required
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
           >
-            <option value="">-- Routes --</option>
-            {buses.length > 0 ? (
-              buses.map((bus) => (
-                <option key={bus._id} value={bus._id}>
-                  {bus.name} (Route No: {bus.number})
+            <option value="">-- Select Route --</option>
+            {routes.length > 0 ? (
+              routes.map((route) => (
+                <option key={route._id} value={route._id}>
+                  {route.name} (Route No: {route.number})
                 </option>
               ))
             ) : (
@@ -81,19 +91,20 @@ const Schedule = () => {
           </select>
         </div>
 
+        {/* Select Bus */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Bus:</label>
           <select
-            value={routeId}
+            value={busId}
             onChange={(e) => setBusId(e.target.value)}
             required
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
           >
             <option value="">-- Select Bus --</option>
-            {routes.length > 0 ? (
-              routes.map((route) => (
-                <option key={route._id} value={route._id}>
-                  {route.start} → {route.destination}
+            {buses.length > 0 ? (
+              buses.map((bus) => (
+                <option key={bus._id} value={bus._id}>
+                  {bus.busName} ({bus.busNumber})
                 </option>
               ))
             ) : (
@@ -102,6 +113,7 @@ const Schedule = () => {
           </select>
         </div>
 
+        {/* Departure Time */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Departure Time:</label>
           <input
@@ -113,7 +125,10 @@ const Schedule = () => {
           />
         </div>
 
-        <button type="submit" className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition duration-200">
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition duration-200"
+        >
           ➕ Add Schedule
         </button>
       </form>
@@ -125,23 +140,33 @@ const Schedule = () => {
       ) : (
         <ul className="space-y-4">
           {schedules.map((schedule) => (
-            <li key={schedule._id} className="bg-gray-100 p-4 rounded-md shadow">
+            <li
+              key={schedule._id}
+              className="bg-gray-100 p-4 rounded-md shadow cursor-pointer"
+              onClick={() => toggleSchedule(schedule._id)}
+            >
               <div className="font-bold text-gray-800">
-                🚌 {schedule.busId?.name || "Unknown Bus"} (Bus No: {schedule.busId?.number || "N/A"}) <br />
-                📍 Route: {schedule.routeId?.start || "Unknown"} → {schedule.routeId?.destination || "Unknown"} <br />
-                ⏰ Departure: {new Date(schedule.departureTime).toLocaleString()}
+                🚌 {schedule.busId?.busName || "Unknown Bus"} (Bus No:{" "}
+                {schedule.busId?.busNumber || "N/A"}) <br />
+                📍 Route: {schedule.routeId?.name || "Unknown"} <br />⏰ Departure:{" "}
+                {new Date(schedule.departureTime).toLocaleString()}
               </div>
-              <ul className="mt-2 space-y-1">
-                {schedule.schedule && schedule.schedule.length > 0 ? (
-                  schedule.schedule.map((stop, index) => (
-                    <li key={index} className="text-gray-600">
-                      📍 {stop.stop}: {stop.time}
-                    </li>
-                  ))
-                ) : (
-                  <p className="text-gray-500">No stops added yet.</p>
-                )}
-              </ul>
+
+              {/* Stop details (Expandable section) */}
+              {selectedScheduleId === schedule._id && (
+                <ul className="mt-2 space-y-1 bg-white p-3 rounded-md shadow-md border">
+                  {schedule.schedule && schedule.schedule.length > 0 ? (
+                    schedule.schedule.map((stop, index) => (
+                      <li key={index} className="text-gray-600 flex items-center space-x-2">
+                        <span className="text-blue-500">📍</span> 
+                        <span>{stop.stop}: {stop.time}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <p className="text-gray-500">No stops added yet.</p>
+                  )}
+                </ul>
+              )}
             </li>
           ))}
         </ul>

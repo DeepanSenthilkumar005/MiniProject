@@ -22,8 +22,14 @@ router.post("/", async (req, res) => {
     // Check if bus and route exist
     const bus = await Bus.findById(busId);
     const route = await Route.findById(routeId);
+
     if (!bus || !route) {
       return res.status(404).json({ message: "Bus or Route not found" });
+    }
+
+    // Ensure route has stops
+    if (!route.stops || route.stops.length === 0) {
+      return res.status(400).json({ message: "Route has no stops defined" });
     }
 
     // Calculate schedule based on stops

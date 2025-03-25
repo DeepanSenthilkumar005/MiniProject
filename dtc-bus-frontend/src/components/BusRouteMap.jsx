@@ -16,7 +16,7 @@ const BusRouteMap = () => {
 
   useEffect(() => {
     axios
-      .get(`${backend}/api/buses/${busId}/stops`)
+      .get(`${backend}/api/routes/${busId}/stops`)
       .then((res) => setStops(res.data))
       .catch((err) => console.log(err));
   }, [busId]);

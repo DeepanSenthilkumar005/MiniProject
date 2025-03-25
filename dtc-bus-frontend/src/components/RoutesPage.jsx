@@ -17,7 +17,7 @@ const RoutePage = () => {
 
   const fetchRoutes = async () => {
     try {
-      const response = await axios.get(`${backend}/api/routes`);
+      const response = await axios.get(`${backend}/api/buses`);
       setRoutes(response.data);
     } catch (error) {
       console.error("Error fetching routes:", error);
@@ -26,7 +26,7 @@ const RoutePage = () => {
 
   const fetchBuses = async () => {
     try {
-      const response = await axios.get(`${backend}/api/buses`);
+      const response = await axios.get(`${backend}/api/routes`);
       setBuses(response.data);
     } catch (error) {
       console.error("Error fetching buses:", error);
@@ -49,7 +49,7 @@ const RoutePage = () => {
     }
 
     try {
-      await axios.post(`${backend}/api/routes`, {
+      await axios.post(`${backend}/api/buses`, {
         routeNumber,
         busId,
         busName,

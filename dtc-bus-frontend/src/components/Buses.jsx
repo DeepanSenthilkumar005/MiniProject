@@ -9,7 +9,7 @@ const Buses = () => {
 
   useEffect(() => {
     axios
-      .get(`${backend}/api/buses`)
+      .get(`${backend}/api/routes`)
       .then((res) => setBuses(res.data))
       .catch((err) => console.error("Error fetching buses:", err));
   }, []);
