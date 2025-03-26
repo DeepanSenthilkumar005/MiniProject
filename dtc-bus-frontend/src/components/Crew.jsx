@@ -4,9 +4,10 @@ import { backend } from "../App";
 
 const Crew = () => {
   const [crewMembers, setCrewMembers] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(""); // ❌ Store error message
   const [formData, setFormData] = useState({
     name: "",
-    role: "Driver", // Default value
+    role: "Driver", // Default role
     contact: "",
     mail: "",
   });
@@ -19,15 +20,14 @@ const Crew = () => {
   const fetchCrew = () => {
     axios
       .get(`${backend}/api/crew`)
-      .then((res) => {
-        setCrewMembers(res.data);
-      })
+      .then((res) => setCrewMembers(res.data))
       .catch((err) => console.error("Error fetching crew:", err));
   };
 
   // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrorMessage(""); // ✅ Clear error message on input change
   };
 
   // Handle form submission
@@ -35,32 +35,34 @@ const Crew = () => {
     e.preventDefault();
 
     if (!formData.name || !formData.role || !formData.contact || !formData.mail) {
-      alert("⚠️ Please fill all fields.");
+      setErrorMessage("⚠️ Please fill all fields.");
       return;
     }
 
     try {
-      // **Step 1: Add Crew Member to Crew Collection**
+      // **Step 1: Check if Email Already Exists in Login Collection**
+      const checkEmailRes = await axios.post(`${backend}/api/login/search`, { mail: formData.mail });
+
+      if (checkEmailRes.data.success) {
+        setErrorMessage("⚠️ Email already exists. Please use a different email.");
+        return;
+      }
+
+      // **Step 2: Add Crew Member to Crew Collection**
       await axios.post(`${backend}/api/crew`, formData);
       alert("✅ Crew member added successfully!");
       fetchCrew(); // Refresh crew list
 
-      // **Step 2: Send Crew Member Data to Login System with Default Password**
-      const loginRes = await axios.post(`${backend}/api/login/auth`, {
+      // **Step 3: Send Crew Member Data to Login System with Default Password**
+      await axios.post(`${backend}/api/login/auth`, {
         mail: formData.mail,
         password: "1", // ✅ Default Password
         name: formData.name,
         role: formData.role,
       });
 
-      if (loginRes.data.success) {
-        console.log("✅ Crew Member Registered in Login System");
-      } else {
-        console.error("❌ Error Registering in Login System");
-      }
-
-      // **Step 3: Send Email with Role & Default Password**
-      const emailRes = await axios.post(`${backend}/api/send-email`, {
+      // **Step 4: Send Email Notification**
+      await axios.post(`${backend}/api/send-email`, {
         email: formData.mail,
         msg: {
           name: formData.name,
@@ -69,25 +71,20 @@ const Crew = () => {
         },
       });
 
-      if (emailRes.data.success) {
-        console.log("📩 Email Sent to Crew Member");
-      } else {
-        console.error("❌ Failed to Send Email");
-      }
-
-      // Reset Form
+      // ✅ Reset Form
       setFormData({ name: "", role: "Driver", contact: "", mail: "" });
     } catch (err) {
       console.error("❌ Error:", err);
-      alert("❌ Failed to add crew member.");
+      setErrorMessage("❌ Failed to add crew member. Try again.");
     }
   };
 
   return (
     <div className="p-5 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-center">
-        🚍 Bus Crew Members
-      </h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">🚍 Bus Crew Members</h2>
+
+      {/* Error Message Display */}
+      {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>}
 
       {/* Crew Form */}
       {!!sessionStorage.getItem("auth") && (
@@ -155,9 +152,7 @@ const Crew = () => {
               key={member._id}
               className="p-4 border rounded-lg shadow-md bg-white hover:shadow-lg transition"
             >
-              <h3 className="text-lg font-semibold text-blue-700">
-                {member.name}
-              </h3>
+              <h3 className="text-lg font-semibold text-blue-700">{member.name}</h3>
               <p>
                 <strong>🛠 Role:</strong> {member.role}
               </p>

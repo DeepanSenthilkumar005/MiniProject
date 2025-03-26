@@ -14,8 +14,8 @@ import BusTracker from "./components/BusTracker";
 import DriverSchedule from "./components/DriverSchedule";
 import SignupPage from "./components/SignupPage";
 
-// export const backend = "https://miniproject-g9lj.onrender.com";
-export const backend = "http://localhost:8000";
+export const backend = "https://miniproject-g9lj.onrender.com";
+// export const backend = "http://localhost:8000";
 
 function App() {
 
