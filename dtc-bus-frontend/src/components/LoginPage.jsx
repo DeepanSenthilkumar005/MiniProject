@@ -76,7 +76,7 @@ function LoginPage() {
           
           sessionStorage.setItem("role", res.data.role); // Store role only during registration
           sessionStorage.setItem("name",res.data.name)
-          if(res.data.role==="Driver")
+          if(res.data.role==="Driver" || res.data.role==="Conductor")
           {
             console.log(res.data.id);
             
@@ -332,8 +332,8 @@ function LoginPage() {
                     <option value="" disabled>
                       Select your role
                     </option>
-                    <option value="Passenger">Passenger</option>
-                    <option value="Admin">Admin</option>
+                    {/* <option value="Passenger">Passenger</option>
+                    <option value="Admin">Admin</option> */}
                     <option value="Driver">Driver</option>
                     <option value="Conductor">Conductor</option>
                   </select>
