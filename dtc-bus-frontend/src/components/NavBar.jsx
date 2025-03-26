@@ -49,7 +49,7 @@ function NavBar() {
   return (
     <nav className="z-50 rounded-b-sm shadow shadow-gray-800 bg-gradient-to-r from-[#FF512F] to-[#F09819] sticky top-0 p-4 flex justify-between items-center text-white transition-all ease-in-out duration-200">
       <h1 className="text-xl font-bold cursor-pointer hover:scale-110 duration-300">
-        Bus360-{role} {userName}
+        Bus360{userName &&<abbr className="no-underline" title={role}>-{userName}</abbr>}
       </h1>
 
       {/* Desktop Links */}
