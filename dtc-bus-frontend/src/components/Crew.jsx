@@ -34,32 +34,45 @@ const Crew = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !formData.name ||
-      !formData.role ||
-      !formData.contact ||
-      !formData.mail
-    ) {
+    if (!formData.name || !formData.role || !formData.contact || !formData.mail) {
       alert("⚠️ Please fill all fields.");
       return;
     }
 
     try {
-      // Add Crew Member
+      // **Step 1: Add Crew Member to Crew Collection**
       await axios.post(`${backend}/api/crew`, formData);
       alert("✅ Crew member added successfully!");
       fetchCrew(); // Refresh crew list
 
-      // Send mail authentication request
-      const res = await axios.post(`${backend}/api/login/auth`, {
+      // **Step 2: Send Crew Member Data to Login System with Default Password**
+      const loginRes = await axios.post(`${backend}/api/login/auth`, {
         mail: formData.mail,
-        password: "1", // Assuming default password
+        password: "1", // ✅ Default Password
         name: formData.name,
         role: formData.role,
       });
 
-      if (res.data.msg === "✅ Valid Password") {
-        console.log("📩 Mail Successfully Added");
+      if (loginRes.data.success) {
+        console.log("✅ Crew Member Registered in Login System");
+      } else {
+        console.error("❌ Error Registering in Login System");
+      }
+
+      // **Step 3: Send Email with Role & Default Password**
+      const emailRes = await axios.post(`${backend}/api/send-email`, {
+        email: formData.mail,
+        msg: {
+          name: formData.name,
+          role: formData.role,
+          password: "1", // ✅ Include Default Password in Email
+        },
+      });
+
+      if (emailRes.data.success) {
+        console.log("📩 Email Sent to Crew Member");
+      } else {
+        console.error("❌ Failed to Send Email");
       }
 
       // Reset Form

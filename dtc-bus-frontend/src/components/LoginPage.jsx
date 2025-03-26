@@ -1,33 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import logo from "../../public/Icon.jpg";
 import axios from "axios";
 import { backend } from "../App";
+import logo from "../../public/Icon.jpg";
+import { Link } from "react-router-dom";
 
-function LoginPage() {
+function Login() {
   const [msg, setMsg] = useState("");
-  const [otp, setOtp] = useState();
-  const [id, setId] = useState();
-  const [checkOtp, setCheckOtp] = useState();
-  const [showOtp, setShowOtp] = useState(false);
   const [show, setShow] = useState(false);
-  const [login, setLogin] = useState(true);
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState(""); // Role state
-  const [name, setName] = useState(""); // Name state
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState("");
-
-  useEffect(() => {
-    if (!login && confirmPassword) {
-      if (confirmPassword !== password) {
-        setConfirmPasswordError("Passwords do not match");
-      } else {
-        setConfirmPasswordError("");
-      }
-    }
-  }, [confirmPassword, password, login]);
+  const [showOtp, setShowOtp] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [enteredOtp, setEnteredOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   useEffect(() => {
     if (msg) {
@@ -36,337 +22,204 @@ function LoginPage() {
     }
   }, [msg]);
 
-  function handleClear() {
-    setMail("");
-    setPassword("");
-    setRole("");
-    setName(""); // Clear name
-    setConfirmPassword("");
-    setConfirmPasswordError("");
-  }
+  async function handleLogin() {
+    if (!mail || !password) {
+      setMsg("⚠️ Enter all required fields");
+      return;
+    }
 
-  async function handleClick() {
-    if (!showOtp) {
-      if (!mail || !password || (!login && (!role || !name))) {
-        setMsg("Enter all required fields");
-        return;
-      }
+    try {
+      const res = await axios.get(`${backend}/api/login/auth/${mail}/${password}`);
 
-      if (!login && confirmPassword !== password) {
-        setMsg("Passwords do not match");
-        return;
-      }
+      if (res.data.msg === "✅ Valid Password") {
+        sessionStorage.setItem("auth", "true");
+        sessionStorage.setItem("role", res.data.role);
+        sessionStorage.setItem("name", res.data.name);
 
-      try {
-        const url = login
-          ? `${backend}/api/login/auth/${mail}/${password}`
-          : `${backend}/api/login/auth`;
-
-        const payload = login
-          ? {} // No additional data for login
-          : { mail, password, name, role }; // Include name and role for registration
-
-        const res = login
-          ? await axios.get(url) // GET request for login
-          : await axios.post(url, payload); // POST request for registration
-
-        if (res.data.msg === "✅ Valid Password") {
-          sessionStorage.setItem("auth", "true");
-          console.log(res.data);
-          
-          sessionStorage.setItem("role", res.data.role); // Store role only during registration
-          sessionStorage.setItem("name",res.data.name)
-          if(res.data.role==="Driver" || res.data.role==="Conductor")
-          {
-            console.log(res.data.id);
-            
-            sessionStorage.setItem("userId",mail);
-          }
-          window.location.href = "/";
+        if (res.data.role === "Driver" || res.data.role === "Conductor") {
+          sessionStorage.setItem("userId", mail);
         }
-        console.log(res.data);
-        setMsg(res.data);
-        handleClear();
-      } catch (e) {
-        console.error("Error:", e.response?.data || e.message);
-        setMsg("Login/Register failed. Try again.");
-      }
-    } else {
-      if (Number(otp) !== Number(checkOtp)) {
-        setMsg("OTP does not match");
-        return;
-      }
 
-      try {
-        const result = await axios.put(`${backend}/api/login/pass`, {
-          mail: mail,
-          password: password,
+        // Send login notification email
+        await axios.post(`${backend}/api/send-email`, {
+          email: mail,
+          msg: { name: res.data.name, role: "Login" },
         });
 
-        setMsg(result.data.message);
-        setMail("");
-        setCheckOtp();
-        setOtp();
-        setRole("");
-        setPassword("");
-        setConfirmPassword("");
-        setShow(false);
-      } catch (error) {
-        console.error("❌ Error Updating Password:", error);
-        setMsg("Failed to update password. Please try again.");
+        window.location.href = "/";
+      } else {
+        setMsg(res.data);
       }
+    } catch (error) {
+      setMsg("❌ Login failed. Try again.");
+      console.error("Error:", error.response?.data || error.message);
     }
   }
 
   async function handleForgetPassword() {
     if (!mail) {
-      setMsg("Enter the Mail ID");
+      setMsg("⚠️ Enter your email to reset password.");
       return;
     }
 
     try {
-      const response = await axios.post(`${backend}/api/login/search`, {
-        mail,
-      });
+      const response = await axios.post(`${backend}/api/login/search`, { mail });
 
       if (response.data.success) {
-        setId(response.data.id);
         const res = await axios.post(`${backend}/api/send-email`, {
           email: mail,
+          msg: "Password Changed",
         });
 
         if (res.data.success) {
           setOtp(res.data.OTP);
-          setMsg("✅ OTP has been sent to your email");
+          setMsg("✅ OTP sent to your email.");
           setShowOtp(true);
         } else {
-          setMsg("Failed to send OTP. Try again.");
+          setMsg("❌ Failed to send OTP.");
         }
       } else {
         setMsg(response.data.message);
       }
     } catch (error) {
-      console.error("❌ Error in Forget Password:", error);
-      setMsg("Something went wrong. Please try again.");
+      setMsg("❌ Error. Try again.");
+    }
+  }
+
+  async function handleResetPassword() {
+    // console.log(otp);
+    
+    if (!enteredOtp) {
+      setMsg("⚠️ Enter the OTP.");
+      return;
+    }
+
+    if (enteredOtp != otp) {
+      setMsg("❌ Incorrect OTP. Please try again.");
+      return;
+    }
+
+    if (!newPassword) {
+      setMsg("⚠️ Enter a new password.");
+      return;
+    }
+
+    try {
+      const res = await axios.put(`${backend}/api/login/pass`, {
+        mail: mail,
+        password: newPassword,
+      });
+
+      if (res.data.success) {
+        setMsg("✅ Password reset successful. Please login.");
+        setShowOtp(false);
+        setEnteredOtp("");
+        setNewPassword("");
+      } else {
+        setMsg("❌ Failed to reset password.");
+      }
+    } catch (error) {
+      setMsg("❌ Error resetting password.");
     }
   }
 
   return (
-    <div className="flex min-h-full h-svh flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm h-fit">
+    <div className="flex min-h-screen flex-col justify-center px-6 py-12">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <img alt="Logo" src={logo} className="mx-auto h-10 w-auto rounded-sm" />
-        <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-          {login ? "Welcome Back!" : "Register the App!"}
+        <h2 className="mt-6 text-center text-2xl font-bold text-gray-900">
+          Welcome Back!
         </h2>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form action="#" method="POST" className="space-y-6">
-          <p
-            className={`flex justify-center ${
-              msg.includes("✅") ? "text-green-500" : "text-red-500"
-            }`}
-          >
-            {msg}
-          </p>
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
+        <form className="space-y-6">
+          <p className={`text-center ${msg.includes("✅") ? "text-green-500" : "text-red-500"}`}>{msg}</p>
 
-          {/* Name Field */}
-          {!login && (
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-900"
-              >
-                Name
-              </label>
-              <div className="mt-2">
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={name}
-                  required
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Email Field */}
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-900"
-            >
-              Email address
-            </label>
-            <div className="mt-2">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={mail}
-                required
-                autoComplete="email"
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
-                onChange={(e) => setMail(e.target.value)}
-              />
-            </div>
+            <label className="block text-sm font-medium text-gray-900">Email</label>
+            <input
+              type="email"
+              value={mail}
+              required
+              className="mt-2 block w-full border border-gray-300 rounded-md p-2"
+              onChange={(e) => setMail(e.target.value)}
+            />
           </div>
 
-          {showOtp && (
-            <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold text-gray-700 text-center mb-2">
-                Enter OTP
-              </h3>
-              <div className="flex justify-center">
-                <input
-                  type="text"
-                  maxLength="4"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  placeholder="Enter OTP"
-                  className="w-32 h-12 text-center text-lg font-semibold border rounded-lg outline-none focus:ring-2 focus:ring-orange-500 tracking-widest"
-                  value={checkOtp}
-                  onChange={(e) => {
-                    const enteredOtp = e.target.value.replace(/\D/g, "");
-                    setCheckOtp(enteredOtp.slice(0, 4));
-                  }}
-                />
-              </div>
-              {otp && checkOtp && Number(otp) !== Number(checkOtp) && (
-                <p className="text-red-500 text-center mt-2">
-                  OTP does not match
-                </p>
-              )}
-            </div>
-          )}
-
-          {/* Password Field with Show/Hide */}
-          <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-900"
-              >
-                Password
-              </label>
-              {login && (
-                <div className="text-sm">
-                  <button
-                    type="button"
-                    className="font-semibold text-orange-600 hover:text-orange-500 cursor-pointer"
-                    onClick={handleForgetPassword}
-                  >
+          {!showOtp ? (
+            <>
+              <div>
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-medium text-gray-900">Password</label>
+                  <button type="button" className="text-orange-600 hover:underline" onClick={handleForgetPassword}>
                     Forgot password?
                   </button>
                 </div>
-              )}
-            </div>
-            <div className="mt-2 relative">
-              <input
-                id="password"
-                name="password"
-                type={show ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
-              />
+                <div className="mt-2 relative">
+                  <input
+                    type={show ? "text" : "password"}
+                    value={password}
+                    required
+                    className="block w-full border border-gray-300 rounded-md p-2"
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button type="button" className="absolute right-2 top-2" onClick={() => setShow(!show)}>
+                    {show ? <FaRegEyeSlash /> : <FaRegEye />}
+                  </button>
+                </div>
+              </div>
+
               <button
                 type="button"
-                onClick={() => setShow(!show)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                className="w-full bg-orange-600 text-white py-2 rounded-md"
+                onClick={handleLogin}
               >
-                {show ? <FaRegEyeSlash /> : <FaRegEye />}
+                Login
               </button>
-            </div>
-          </div>
-
-          {/* Confirm Password Field (Only for Register) */}
-          {!login && (
-            <div>
+            </>
+          ) : (
+            <>
+              {/* OTP Verification */}
               <div>
-                <label
-                  htmlFor="confirmpassword"
-                  className="block text-sm font-medium text-gray-900"
-                >
-                  Confirm Password
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="confirmpassword"
-                    name="confirmpassword"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    autoComplete="new-password"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
-                  />
-                </div>
-                {confirmPasswordError && (
-                  <p className="text-red-500">{confirmPasswordError}</p>
-                )}
+                <label className="block text-sm font-medium text-gray-900">Enter OTP</label>
+                <input
+                  type="text"
+                  maxLength="4"
+                  className="mt-2 block w-full border border-gray-300 rounded-md p-2"
+                  value={enteredOtp}
+                  onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                />
               </div>
 
-              {/* Role Dropdown */}
+              {/* New Password Input */}
               <div>
-                <label
-                  htmlFor="role"
-                  className="block text-sm font-medium text-gray-900"
-                >
-                  Role
-                </label>
-                <div className="mt-2">
-                  <select
-                    id="role"
-                    name="role"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    required
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
-                  >
-                    <option value="" disabled>
-                      Select your role
-                    </option>
-                    {/* <option value="Passenger">Passenger</option>
-                    <option value="Admin">Admin</option> */}
-                    <option value="Driver">Driver</option>
-                    <option value="Conductor">Conductor</option>
-                  </select>
-                </div>
+                <label className="block text-sm font-medium text-gray-900">New Password</label>
+                <input
+                  type="password"
+                  className="mt-2 block w-full border border-gray-300 rounded-md p-2"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
               </div>
-            </div>
+
+              <button
+                type="button"
+                className="w-full bg-green-600 text-white py-2 rounded-md"
+                onClick={handleResetPassword}
+              >
+                Reset Password
+              </button>
+            </>
           )}
-
-          {/* Submit Button */}
-          <div>
-            <button
-              type="button"
-              className="flex w-full justify-center rounded-md bg-orange-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              onClick={handleClick}
-            >
-              {login ? "Login" : "Register"}
-            </button>
-          </div>
         </form>
 
-        {/* Toggle Login/Register */}
-        <p className="mt-10 text-center text-sm text-gray-500">
-          {login ? "Not a member?" : "Already have an account?"}{" "}
-          <span
-            className="font-semibold text-orange-600 hover:text-indigo-500 cursor-pointer"
-            onClick={() => setLogin(!login)}
-          >
-            {login ? "Create Account" : "Login"}
-          </span>
+        <p className="mt-5 text-center text-sm text-gray-500">
+          Not a member? <Link to="/signup" className="text-orange-600 hover:underline">Create Account</Link>
         </p>
       </div>
     </div>
   );
 }
 
-export default LoginPage;
+export default Login;

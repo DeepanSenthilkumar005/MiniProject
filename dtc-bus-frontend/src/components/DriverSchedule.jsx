@@ -19,7 +19,7 @@ function DriverSchedule() {
 
         // Ensure res.data is an array
         const driverSchedules = res.data.filter((schedule) => {
-          console.log(schedule.driverId?._id+"==="+driverId);
+          // console.log(schedule.driverId?.mail+"==="+driverId);
           return (schedule.driverId?.mail) == driverId;
           // return (schedule.driverId?._id).toString() === driverId.toString();
 

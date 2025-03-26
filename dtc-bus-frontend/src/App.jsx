@@ -12,9 +12,10 @@ import Login from "./components/LoginPage";
 import AddBusStopList from "./components/AddBusStopList";
 import BusTracker from "./components/BusTracker";
 import DriverSchedule from "./components/DriverSchedule";
+import SignupPage from "./components/SignupPage";
 
-export const backend = "https://miniproject-g9lj.onrender.com";
-// export const backend = "http://localhost:8000";
+// export const backend = "https://miniproject-g9lj.onrender.com";
+export const backend = "http://localhost:8000";
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignupPage />} />
           <Route path="/track" element={<BusTracker/>} />
           {!!!sessionStorage.getItem("userId") ? <Route path="/schedule" element={<Schedule />} /> : <Route path="/schedule" element={<DriverSchedule />} />}
           
