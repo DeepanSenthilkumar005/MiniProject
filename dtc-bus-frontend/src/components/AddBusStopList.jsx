@@ -177,7 +177,7 @@ const AddBusStopList = () => {
           latitude: "",
           longitude: "",
           coordinates: "",
-          timeDifference: "0",
+          timeDifference: "",
         }); // Reset fields
         setEditingStop(null); // Reset editing stop
       })
@@ -214,24 +214,17 @@ const AddBusStopList = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-lg font-bold mb-4">Add New Bus</h2>
+      <h2 className="text-lg font-bold mb-4">Add New Bus Route</h2>
       <div className="space-y-2">
         <input
           type="text"
           name="name"
-          placeholder="Bus Name"
+          placeholder="Route Name"
           value={newBus.name}
           onChange={handleBusInputChange}
           className="w-full p-2 border rounded-md"
         />
-        <input
-          type="text"
-          name="number"
-          placeholder="Bus Number"
-          value={newBus.number}
-          onChange={handleBusInputChange}
-          className="w-full p-2 border rounded-md"
-        />
+
         <button
           onClick={handleAddBus}
           className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"

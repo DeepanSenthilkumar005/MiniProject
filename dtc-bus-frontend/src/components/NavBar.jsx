@@ -5,26 +5,31 @@ import { IoMdClose } from "react-icons/io";
 
 function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!sessionStorage.getItem("auth")
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(!!sessionStorage.getItem("auth"));
+  const [role, setRole] = useState(sessionStorage.getItem("role"));
+  const [userName, setUserName] = useState(sessionStorage.getItem("name"));
+
   const menuRef = useRef(null);
   const location = useLocation(); // Get current route
 
-  // ✅ Listen for sessionStorage changes (Auth Status)
+  // ✅ Listen for sessionStorage changes
   useEffect(() => {
-    const updateAuthStatus = () =>
+    const updateAuthStatus = () => {
       setIsAuthenticated(!!sessionStorage.getItem("auth"));
+      setRole(sessionStorage.getItem("role"));
+      setUserName(sessionStorage.getItem("name"));
+    };
     window.addEventListener("storage", updateAuthStatus);
     return () => window.removeEventListener("storage", updateAuthStatus);
   }, []);
 
   // ✅ Logout function
   const handleLogout = () => {
-    if (window.confirm("Are you sure wnat to logout")) {
-      sessionStorage.removeItem("auth");
-      sessionStorage.removeItem("role");
+    if (window.confirm("Are you sure you want to logout?")) {
+      sessionStorage.clear();
       setIsAuthenticated(false);
+      setRole(null);
+      setUserName(null);
     }
   };
 
@@ -34,22 +39,17 @@ function NavBar() {
     { path: "/schedule", label: "Schedule" },
     { path: "/routes", label: "Routes" },
     { path: "/crew", label: "Crew" },
-    { path: "/buses", label: "Route Map" },
-    isAuthenticated && { path: "/add/busstoplist", label: "Add Bus" }, // ✅ Show only if logged in
+    role === "Admin" && { path: "/buses", label: "Add Bus" }, // ✅ Only for Admin
+    role === "Admin" && { path: "/add/busstoplist", label: "Add Stop" }, // ✅ Only for Admin
     isAuthenticated
       ? { path: "/login", label: "Logout", action: handleLogout } // ✅ Logout button
       : { path: "/login", label: "Login" }, // ✅ Login button
   ].filter(Boolean); // ✅ Remove `null` values from array
 
   return (
-    <nav className="z-50 rounded-b-sm  shadow shadow-gray-800 bg-gradient-to-r from-[#FF512F] to-[#F09819] sticky top-0 p-4 flex justify-between items-center text-white transition-all ease-in-out duration-200">
-      <h1
-        className="text-xl font-bold cursor-pointer hover:scale-110 duration-300"
-        onClick={() => {
-          window.location.reload();
-        }}
-      >
-        Bus360-{sessionStorage.getItem("role")}
+    <nav className="z-50 rounded-b-sm shadow shadow-gray-800 bg-gradient-to-r from-[#FF512F] to-[#F09819] sticky top-0 p-4 flex justify-between items-center text-white transition-all ease-in-out duration-200">
+      <h1 className="text-xl font-bold cursor-pointer hover:scale-110 duration-300">
+        Bus360-{role} {userName}
       </h1>
 
       {/* Desktop Links */}

@@ -72,7 +72,16 @@ function LoginPage() {
 
         if (res.data.msg === "✅ Valid Password") {
           sessionStorage.setItem("auth", "true");
+          console.log(res.data);
+          
           sessionStorage.setItem("role", res.data.role); // Store role only during registration
+          sessionStorage.setItem("name",res.data.name)
+          if(res.data.role==="Driver")
+          {
+            console.log(res.data.id);
+            
+            sessionStorage.setItem("userId",mail);
+          }
           window.location.href = "/";
         }
         console.log(res.data);

@@ -26,6 +26,6 @@ const loginSchema = new mongoose.Schema({
 });
 
 // Ensure TTL index is created (deletes after 60 seconds)
-loginSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1440 });
+// loginSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1440 });
 
 module.exports = mongoose.model("Login", loginSchema);
