@@ -1,0 +1,434 @@
+[{
+  "_id": {
+    "$oid": "67cfba04494945ca064a6cbf"
+  },
+  "name": "Tiruchengode - Erode",
+  "number": "1",
+  "stops": [
+    {
+      "name": "Tiruchengode",
+      "latitude": 11.383628221854998,
+      "longitude": 77.89534125852373,
+      "_id": {
+        "$oid": "67cfba04494945ca064a6cc0"
+      },
+      "timeDifference": 0
+    },
+    {
+      "name": "Kollapatti",
+      "latitude": 11.369762669631736,
+      "longitude": 77.86406595681193,
+      "_id": {
+        "$oid": "67cfba04494945ca064a6cc1"
+      },
+      "timeDifference": 6
+    },
+    {
+      "name": "Thokkavadi",
+      "latitude": 11.365643819034474,
+      "longitude": 77.84260781172925,
+      "_id": {
+        "$oid": "67cfba04494945ca064a6cc2"
+      },
+      "timeDifference": 7
+    },
+    {
+      "name": "KSR",
+      "latitude": 11.36372167479695,
+      "longitude": 77.82799089410585,
+      "_id": {
+        "$oid": "67cfba04494945ca064a6cc3"
+      },
+      "timeDifference": 2
+    },
+    {
+      "name": "Anjupannai",
+      "latitude": 11.36377797101859,
+      "longitude": 77.80751396928822,
+      "_id": {
+        "$oid": "67cfba04494945ca064a6cc4"
+      },
+      "timeDifference": 5
+    },
+    {
+      "name": "SPB",
+      "latitude": 11.36379644412721,
+      "longitude": 77.7853179872891,
+      "_id": {
+        "$oid": "67cfba04494945ca064a6cc5"
+      },
+      "timeDifference": 10
+    },
+    {
+      "name": "Pallipalayam",
+      "latitude": 11.36449687282922,
+      "longitude": 77.74767917413527,
+      "_id": {
+        "$oid": "67cfba04494945ca064a6cc6"
+      },
+      "timeDifference": 15
+    },
+    {
+      "name": "Erode",
+      "latitude": 11.347002526815434,
+      "longitude": 77.71964468559979,
+      "_id": {
+        "$oid": "67cfba04494945ca064a6cc7"
+      },
+      "timeDifference": 10
+    }
+  ],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d272ffb0ed5c8413d3a892"
+  },
+  "name": "Erode - Coimbatore ",
+  "number": "2",
+  "stops": [
+    {
+      "name": "Erode Bus Stand",
+      "latitude": 11.347002526815434,
+      "longitude": 77.71964468559979,
+      "_id": {
+        "$oid": "67d273f0b0ed5c8413d3a8b0"
+      }
+    },
+    {
+      "name": "Thindal",
+      "latitude": 11.3206163,
+      "longitude": 77.6741473,
+      "_id": {
+        "$oid": "67d294fed08ba2ee2a252306"
+      }
+    },
+    {
+      "name": "Perundurai",
+      "latitude": 11.2731998,
+      "longitude": 77.5803185,
+      "_id": {
+        "$oid": "67d2741cb0ed5c8413d3a8c8"
+      }
+    },
+    {
+      "name": "Vijayamangalam",
+      "latitude": 11.2424826,
+      "longitude": 77.5051866,
+      "_id": {
+        "$oid": "67d27451b0ed5c8413d3a8d7"
+      }
+    },
+    {
+      "name": "Pallagoundanpalyam",
+      "latitude": 11.2263996,
+      "longitude": 77.4662742,
+      "_id": {
+        "$oid": "67d2747ab0ed5c8413d3a915"
+      }
+    },
+    {
+      "name": "Chengappalli",
+      "latitude": 11.1995702,
+      "longitude": 77.4222675,
+      "_id": {
+        "$oid": "67d2754eb0ed5c8413d3a988"
+      }
+    },
+    {
+      "name": "Perumanallur",
+      "latitude": 11.207243,
+      "longitude": 77.3589541,
+      "_id": {
+        "$oid": "67d275fdb0ed5c8413d3a9a8"
+      }
+    },
+    {
+      "name": "Avinashi",
+      "latitude": 11.187235,
+      "longitude": 77.278287,
+      "_id": {
+        "$oid": "67d2768bb0ed5c8413d3a9e5"
+      }
+    },
+    {
+      "name": "Thekkalur",
+      "latitude": 11.1546951,
+      "longitude": 77.213595,
+      "_id": {
+        "$oid": "67d277adb0ed5c8413d3aa4f"
+      }
+    },
+    {
+      "name": "Karumathampatti",
+      "latitude": 11.1073821,
+      "longitude": 77.1769781,
+      "_id": {
+        "$oid": "67d2782eb0ed5c8413d3aaa0"
+      }
+    },
+    {
+      "name": "Neelambur",
+      "latitude": 11.0607692,
+      "longitude": 77.0853358,
+      "_id": {
+        "$oid": "67d27bd0b0ed5c8413d3ad2e"
+      }
+    },
+    {
+      "name": "KMCH",
+      "latitude": 11.041007859810962,
+      "longitude": 77.04165707993876,
+      "_id": {
+        "$oid": "67d29488d08ba2ee2a252305"
+      }
+    },
+    {
+      "name": "Sitra(AirPort)",
+      "latitude": 11.037896098221992,
+      "longitude": 77.03746364453785,
+      "_id": {
+        "$oid": "67d27eb4b0ed5c8413d3ad4f"
+      }
+    },
+    {
+      "name": "Peelamedu",
+      "latitude": 11.0259502,
+      "longitude": 77.0187853,
+      "_id": {
+        "$oid": "67d27f45b0ed5c8413d3adc4"
+      }
+    },
+    {
+      "name": "Gandhipuram",
+      "latitude": 11.014400023935757,
+      "longitude": 76.9670713124035,
+      "_id": {
+        "$oid": "67d280bab0ed5c8413d3ae27"
+      }
+    }
+  ],
+  "__v": 13
+},
+{
+  "_id": {
+    "$oid": "67d27f27b0ed5c8413d3ad8e"
+  },
+  "name": "Namakkal - Thuraiyur",
+  "number": "3",
+  "stops": [
+    {
+      "name": "Namakkal Bus Stand",
+      "latitude": 11.258390547012958,
+      "longitude": 78.17179246833005,
+      "_id": {
+        "$oid": "67d27f9ab0ed5c8413d3adc7"
+      }
+    },
+    {
+      "name": "Erumapatty Bus Stand",
+      "latitude": 11.147848949125423,
+      "longitude": 78.28719736647793,
+      "_id": {
+        "$oid": "67d842b7b4b01181b652c19d"
+      }
+    }
+  ],
+  "__v": 2
+},
+{
+  "_id": {
+    "$oid": "67d29aa6bf56b2d4b3c2e5ae"
+  },
+  "name": "Erode - Rasipuram ",
+  "number": "4",
+  "stops": [
+    {
+      "name": "Erode",
+      "latitude": 11.347002526815434,
+      "longitude": 77.71964468559979,
+      "_id": {
+        "$oid": "67d29ba5bf56b2d4b3c2e6ad"
+      }
+    },
+    {
+      "name": "Pallipalayam",
+      "latitude": 11.36449687282922,
+      "longitude": 77.74767917413527,
+      "_id": {
+        "$oid": "67d29c92bf56b2d4b3c2e77f"
+      }
+    },
+    {
+      "name": "SPB",
+      "latitude": 11.36379644412721,
+      "longitude": 77.7853179872891,
+      "_id": {
+        "$oid": "67d29cb7bf56b2d4b3c2e785"
+      }
+    },
+    {
+      "name": "Anjupannai",
+      "latitude": 11.36377797101859,
+      "longitude": 77.80751396928822,
+      "_id": {
+        "$oid": "67d29cd0bf56b2d4b3c2e80b"
+      }
+    },
+    {
+      "name": "KSR",
+      "latitude": 11.36372167479695,
+      "longitude": 77.82799089410585,
+      "_id": {
+        "$oid": "67d29ce7bf56b2d4b3c2e812"
+      }
+    },
+    {
+      "name": "Thokkavadi",
+      "latitude": 11.365643819034474,
+      "longitude": 77.84260781172925,
+      "_id": {
+        "$oid": "67d29d09bf56b2d4b3c2e81a"
+      }
+    },
+    {
+      "name": "Kollapatti",
+      "latitude": 11.369762669631736,
+      "longitude": 77.86406595681193,
+      "_id": {
+        "$oid": "67d29d33bf56b2d4b3c2e842"
+      }
+    },
+    {
+      "name": "Tiruchengode",
+      "latitude": 11.383628221854998,
+      "longitude": 77.89534125852373,
+      "_id": {
+        "$oid": "67d29d4fbf56b2d4b3c2e85e"
+      }
+    },
+    {
+      "name": "Kumaramangalam",
+      "latitude": 11.3687488,
+      "longitude": 77.9309878,
+      "_id": {
+        "$oid": "67d29e52bf56b2d4b3c2e8c8"
+      }
+    },
+    {
+      "name": "Elachipalayam",
+      "latitude": 11.3859318,
+      "longitude": 78.0127328,
+      "_id": {
+        "$oid": "67d29f0dbf56b2d4b3c2e8ea"
+      }
+    },
+    {
+      "name": "Vaiyappamalai",
+      "latitude": 11.4147247,
+      "longitude": 78.0808577,
+      "_id": {
+        "$oid": "67d29f94bf56b2d4b3c2e8f7"
+      }
+    },
+    {
+      "name": "Gurusamipalayam",
+      "latitude": 11.4323707,
+      "longitude": 78.1316395,
+      "_id": {
+        "$oid": "67d2a100bf56b2d4b3c2e905"
+      }
+    },
+    {
+      "name": "Andagalore Gate",
+      "latitude": 11.4454132,
+      "longitude": 78.1582165,
+      "_id": {
+        "$oid": "67d2a1c6bf56b2d4b3c2e914"
+      }
+    },
+    {
+      "name": "Rasipuram",
+      "latitude": 11.4577997,
+      "longitude": 78.1911514,
+      "_id": {
+        "$oid": "67d2a251bf56b2d4b3c2e924"
+      }
+    }
+  ],
+  "__v": 14
+},
+{
+  "_id": {
+    "$oid": "67d2aded966341a6e3329ec8"
+  },
+  "name": "Erode - Salem",
+  "number": "5",
+  "stops": [
+    {
+      "name": "Erode ",
+      "latitude": 11.347002526815434,
+      "longitude": 77.71964468559979,
+      "_id": {
+        "$oid": "67d2ae57966341a6e3329ecb"
+      }
+    },
+    {
+      "name": "Pallipalayam",
+      "latitude": 11.36449687282922,
+      "longitude": 77.74767917413527,
+      "_id": {
+        "$oid": "67d2ae77966341a6e3329ecf"
+      }
+    },
+    {
+      "name": "SPB",
+      "latitude": 11.36379644412721,
+      "longitude": 77.7853179872891,
+      "_id": {
+        "$oid": "67d2ae91966341a6e3329ed4"
+      }
+    },
+    {
+      "name": "Anjupannai",
+      "latitude": 11.36377797101859,
+      "longitude": 77.80751396928822,
+      "_id": {
+        "$oid": "67d2aec0966341a6e3329eda"
+      }
+    },
+    {
+      "name": "KSR",
+      "latitude": 11.36372167479695,
+      "longitude": 77.82799089410585,
+      "_id": {
+        "$oid": "67d2aed6966341a6e3329ee1"
+      }
+    },
+    {
+      "name": "Thokkavadi",
+      "latitude": 11.365643819034474,
+      "longitude": 77.84260781172925,
+      "_id": {
+        "$oid": "67d2aeeb966341a6e3329ee9"
+      }
+    },
+    {
+      "name": "Kollapatti",
+      "latitude": 11.369762669631736,
+      "longitude": 77.86406595681193,
+      "_id": {
+        "$oid": "67d2aefe966341a6e3329ef2"
+      }
+    },
+    {
+      "name": "Tiruchengode",
+      "latitude": 11.383628221854998,
+      "longitude": 77.89534125852373,
+      "_id": {
+        "$oid": "67d2af11966341a6e3329efc"
+      }
+    }
+  ],
+  "__v": 8
+}]

@@ -4,6 +4,7 @@ import { backend } from "../App";
 
 const Crew = () => {
   const [crewMembers, setCrewMembers] = useState([]);
+  const [status, setStatus] = useState(true);
   const [errorMessage, setErrorMessage] = useState(""); // ❌ Store error message
   const [formData, setFormData] = useState({
     name: "",
@@ -34,20 +35,29 @@ const Crew = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.role || !formData.contact || !formData.mail) {
+    if (
+      !formData.name ||
+      !formData.role ||
+      !formData.contact ||
+      !formData.mail
+    ) {
       setErrorMessage("⚠️ Please fill all fields.");
       return;
     }
 
     try {
+      setStatus(false);
       // **Step 1: Check if Email Already Exists in Login Collection**
-      const checkEmailRes = await axios.post(`${backend}/api/login/search`, { mail: formData.mail });
+      const checkEmailRes = await axios.post(`${backend}/api/login/search`, {
+        mail: formData.mail,
+      });
 
       if (checkEmailRes.data.success) {
-        setErrorMessage("⚠️ Email already exists. Please use a different email.");
+        setErrorMessage(
+          "⚠️ Email already exists. Please use a different email."
+        );
         return;
       }
-
       // **Step 2: Add Crew Member to Crew Collection**
       await axios.post(`${backend}/api/crew`, formData);
       alert("✅ Crew member added successfully!");
@@ -76,15 +86,21 @@ const Crew = () => {
     } catch (err) {
       console.error("❌ Error:", err);
       setErrorMessage("❌ Failed to add crew member. Try again.");
+    } finally {
+      setStatus(true);
     }
   };
 
   return (
     <div className="p-5 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-center">🚍 Bus Crew Members</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">
+        🚍 Bus Crew Members
+      </h2>
 
       {/* Error Message Display */}
-      {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="text-red-500 text-center">{errorMessage}</p>
+      )}
 
       {/* Crew Form */}
       {!!sessionStorage.getItem("auth") && (
@@ -100,6 +116,7 @@ const Crew = () => {
               placeholder="Name"
               value={formData.name}
               onChange={handleChange}
+              disabled={status ? false : true}
               className="p-2 border rounded"
               required
             />
@@ -110,6 +127,7 @@ const Crew = () => {
               value={formData.role}
               onChange={handleChange}
               className="p-2 border rounded"
+              disabled={status ? false : true}
               required
             >
               <option value="Driver">Driver</option>
@@ -122,6 +140,7 @@ const Crew = () => {
               placeholder="Contact"
               value={formData.contact}
               onChange={handleChange}
+              disabled={status ? false : true}
               className="p-2 border rounded"
               required
             />
@@ -131,14 +150,15 @@ const Crew = () => {
               placeholder="Email"
               value={formData.mail}
               onChange={handleChange}
+              disabled={status ? false : true}
               className="p-2 border rounded lowercase"
               required
             />
             <button
               type="submit"
-              className="col-span-2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+              className="col-span-2 cursor-pointer bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
             >
-              Add Crew Member
+              {status ? "Add Crew Member" : <p>Submitting...</p>}
             </button>
           </form>
         </div>
@@ -152,7 +172,9 @@ const Crew = () => {
               key={member._id}
               className="p-4 border rounded-lg shadow-md bg-white hover:shadow-lg transition"
             >
-              <h3 className="text-lg font-semibold text-blue-700">{member.name}</h3>
+              <h3 className="text-lg font-semibold text-blue-700">
+                {member.name}
+              </h3>
               <p>
                 <strong>🛠 Role:</strong> {member.role}
               </p>

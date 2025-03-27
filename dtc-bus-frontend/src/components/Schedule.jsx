@@ -4,6 +4,7 @@ import { backend } from "../App";
 
 const Schedule = () => {
   const [schedules, setSchedules] = useState([]);
+  const [status, setStatus] = useState(true);
   const [buses, setBuses] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [crewMembers, setCrewMembers] = useState([]); // ✅ Fetch Crew Data
@@ -49,6 +50,7 @@ const Schedule = () => {
     }
 
     try {
+      setStatus(false);
       await axios.post(`${backend}/api/schedules`, {
         busId,
         routeId,
@@ -57,6 +59,11 @@ const Schedule = () => {
         conductorId,
       });
       alert("✅ Schedule added successfully!");
+      setBusId("");
+      setRouteId("");
+      setDepartureTime("");
+      setDriverId("");
+      setConductorId("");
 
       // Fetch updated schedules
       const response = await axios.get(`${backend}/api/schedules`);
@@ -64,6 +71,9 @@ const Schedule = () => {
     } catch (error) {
       console.error("❌ Error adding schedule:", error);
       alert("❌ Failed to add schedule.");
+    } finally {
+      setStatus(true);
+
     }
   };
 
@@ -80,7 +90,7 @@ const Schedule = () => {
       </h1>
 
       {/* Add Schedule Form */}
-      {sessionStorage.getItem("role")==="Admin" && (
+      {sessionStorage.getItem("role") === "Admin" && (
         <form className="mb-6" onSubmit={handleSubmit}>
           {/* Select Route */}
           <div className="mb-4">
@@ -90,6 +100,7 @@ const Schedule = () => {
             <select
               value={routeId}
               onChange={(e) => setRouteId(e.target.value)}
+              disabled={status ? false : true}
               required
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
             >
@@ -110,6 +121,7 @@ const Schedule = () => {
             <select
               value={busId}
               onChange={(e) => setBusId(e.target.value)}
+              disabled={status ? false : true}
               required
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
             >
@@ -130,6 +142,7 @@ const Schedule = () => {
             <select
               value={driverId}
               onChange={(e) => setDriverId(e.target.value)}
+              disabled={status ? false : true}
               required
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
             >
@@ -152,6 +165,7 @@ const Schedule = () => {
             <select
               value={conductorId}
               onChange={(e) => setConductorId(e.target.value)}
+              disabled={status ? false : true}
               required
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
             >
@@ -175,16 +189,18 @@ const Schedule = () => {
               type="datetime-local"
               value={departureTime}
               onChange={(e) => setDepartureTime(e.target.value)}
+              disabled={status ? false : true}
               required
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
             />
           </div>
 
           <button
+              disabled={status ? false : true}
             type="submit"
             className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition duration-200"
           >
-            ➕ Add Schedule
+            {status ? "➕ Add Schedule" : "Submitting..."}
           </button>
         </form>
       )}
