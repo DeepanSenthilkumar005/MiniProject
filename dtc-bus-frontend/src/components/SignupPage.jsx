@@ -185,7 +185,7 @@ function SignupPage() {
               >
                 <option value="" disabled>Select your role</option>
                 <option value="Passenger">Passenger</option>
-                <option value="Admin">Admin</option>
+                {/* <option value="Admin">Admin</option> */}
                 <option value="Driver">Driver</option>
                 <option value="Conductor">Conductor</option>
               </select>
