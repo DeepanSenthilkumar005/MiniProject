@@ -88,7 +88,7 @@ function BusTracker() {
           <p>
             <strong>📍 Latitude:</strong> {latitude} <br />
             <strong>📍 Longitude:</strong> {longitude} <br />
-            <strong>🎯 Accuracy:</strong> ±{accuracy} meters
+            <strong>🎯 Accuracy:</strong> ±{Math.round(accuracy)} meters
           </p>
 
           {/* Map Display */}
