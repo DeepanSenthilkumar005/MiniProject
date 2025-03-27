@@ -78,7 +78,7 @@ function BusTracker() {
   return (
     <div className="p-4 text-center">
       <h2 className="text-lg font-bold">
-        🚌 Live Bus Tracker (Next update in {remainingSec} sec)
+        🚌 Live Bus Tracker {!error && `(Next update in ${remainingSec} sec)`}
       </h2>
 
       {error ? (
