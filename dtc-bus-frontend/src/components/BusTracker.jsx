@@ -16,16 +16,29 @@ function BusTracker() {
   const [longitude, setLongitude] = useState(null);
   const [accuracy, setAccuracy] = useState(null);
   const [error, setError] = useState(null);
+  const [remainingSec, setRemainingSec] = useState(10);
+  const updateInterval = 10 * 1000; // 10 seconds
 
   useEffect(() => {
     requestLocation(); // Fetch location on first load
 
-    // Automatically update location every 10 seconds
+    let startTime = Date.now();
+    
+    const timer = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const timeLeft = Math.max(10 - Math.floor(elapsed / 1000), 0);
+      setRemainingSec(timeLeft);
+    }, 1000);
+
     const interval = setInterval(() => {
       requestLocation();
-    }, 10000); // 10 sec
+      startTime = Date.now(); // Reset start time after updating location
+    }, updateInterval);
 
-    return () => clearInterval(interval); // Cleanup interval on component unmount
+    return () => {
+      clearInterval(interval);
+      clearInterval(timer);
+    };
   }, []);
 
   const requestLocation = () => {
@@ -40,6 +53,7 @@ function BusTracker() {
         setLongitude(position.coords.longitude);
         setAccuracy(position.coords.accuracy);
         setError(null);
+        setRemainingSec(10); // Reset timer on update
       },
       (err) => {
         console.error("❌ Geolocation Error:", err);
@@ -63,7 +77,9 @@ function BusTracker() {
 
   return (
     <div className="p-4 text-center">
-      <h2 className="text-lg font-bold">🚌 Live Bus Tracker (Auto Updates Every 10 sec)</h2>
+      <h2 className="text-lg font-bold">
+        🚌 Live Bus Tracker (Next update in {remainingSec} sec)
+      </h2>
 
       {error ? (
         <p className="text-red-500">{error}</p>

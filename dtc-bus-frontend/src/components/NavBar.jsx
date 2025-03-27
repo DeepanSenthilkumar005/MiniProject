@@ -39,6 +39,7 @@ function NavBar() {
     { path: "/schedule", label: "Schedule" },
     { path: "/routes", label: "Routes" },
     { path: "/crew", label: "Crew" },
+    (!!sessionStorage.getItem("role") && sessionStorage.getItem("role")=="Driver")&&{path:"/track", label:"Track Driver"},
     role === "Admin" && { path: "/buses", label: "Add Bus" }, // ✅ Only for Admin
     role === "Admin" && { path: "/add/busstoplist", label: "Add Stop" }, // ✅ Only for Admin
     isAuthenticated

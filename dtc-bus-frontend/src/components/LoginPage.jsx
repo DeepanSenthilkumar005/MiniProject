@@ -14,6 +14,7 @@ function Login() {
   const [otp, setOtp] = useState("");
   const [enteredOtp, setEnteredOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [status, setStatus] = useState(false);
 
   useEffect(() => {
     if (msg) {
@@ -29,7 +30,10 @@ function Login() {
     }
 
     try {
-      const res = await axios.get(`${backend}/api/login/auth/${mail}/${password}`);
+      setStatus(true);
+      const res = await axios.get(
+        `${backend}/api/login/auth/${mail}/${password}`
+      );
 
       if (res.data.msg === "✅ Valid Password") {
         sessionStorage.setItem("auth", "true");
@@ -53,6 +57,8 @@ function Login() {
     } catch (error) {
       setMsg("❌ Login failed. Try again.");
       console.error("Error:", error.response?.data || error.message);
+    } finally {
+      setStatus(false);
     }
   }
 
@@ -63,7 +69,9 @@ function Login() {
     }
 
     try {
-      const response = await axios.post(`${backend}/api/login/search`, { mail });
+      const response = await axios.post(`${backend}/api/login/search`, {
+        mail,
+      });
 
       if (response.data.success) {
         const res = await axios.post(`${backend}/api/send-email`, {
@@ -88,7 +96,7 @@ function Login() {
 
   async function handleResetPassword() {
     // console.log(otp);
-    
+
     if (!enteredOtp) {
       setMsg("⚠️ Enter the OTP.");
       return;
@@ -134,13 +142,22 @@ function Login() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
         <form className="space-y-6">
-          <p className={`text-center ${msg.includes("✅") ? "text-green-500" : "text-red-500"}`}>{msg}</p>
+          <p
+            className={`text-center ${
+              msg.includes("✅") ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {msg}
+          </p>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900">Email</label>
+            <label className="block text-sm font-medium text-gray-900">
+              Email
+            </label>
             <input
               type="email"
               value={mail}
+              disabled={status ? true : false}
               required
               className="mt-2 block w-full border border-gray-300 rounded-md p-2"
               onChange={(e) => setMail(e.target.value)}
@@ -151,8 +168,14 @@ function Login() {
             <>
               <div>
                 <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-gray-900">Password</label>
-                  <button type="button" className="text-orange-600 hover:underline" onClick={handleForgetPassword}>
+                  <label className="block text-sm font-medium text-gray-900">
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    className="text-orange-600 hover:underline"
+                    onClick={handleForgetPassword}
+                  >
                     Forgot password?
                   </button>
                 </div>
@@ -160,11 +183,16 @@ function Login() {
                   <input
                     type={show ? "text" : "password"}
                     value={password}
+                    disabled={status ? true : false}
                     required
                     className="block w-full border border-gray-300 rounded-md p-2"
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  <button type="button" className="absolute right-2 top-2" onClick={() => setShow(!show)}>
+                  <button
+                    type="button"
+                    className="absolute right-2 top-2"
+                    onClick={() => setShow(!show)}
+                  >
                     {show ? <FaRegEyeSlash /> : <FaRegEye />}
                   </button>
                 </div>
@@ -172,29 +200,36 @@ function Login() {
 
               <button
                 type="button"
+                disabled={status ? true : false}
                 className="w-full bg-orange-600 text-white py-2 rounded-md"
                 onClick={handleLogin}
               >
-                Login
+                {status ? "Submitting.." : "Login"}
               </button>
             </>
           ) : (
             <>
               {/* OTP Verification */}
               <div>
-                <label className="block text-sm font-medium text-gray-900">Enter OTP</label>
+                <label className="block text-sm font-medium text-gray-900">
+                  Enter OTP
+                </label>
                 <input
                   type="text"
                   maxLength="4"
                   className="mt-2 block w-full border border-gray-300 rounded-md p-2"
                   value={enteredOtp}
-                  onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                  onChange={(e) =>
+                    setEnteredOtp(e.target.value.replace(/\D/g, "").slice(0, 4))
+                  }
                 />
               </div>
 
               {/* New Password Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-900">New Password</label>
+                <label className="block text-sm font-medium text-gray-900">
+                  New Password
+                </label>
                 <input
                   type="password"
                   className="mt-2 block w-full border border-gray-300 rounded-md p-2"
@@ -215,7 +250,10 @@ function Login() {
         </form>
 
         <p className="mt-5 text-center text-sm text-gray-500">
-          Not a member? <Link to="/signup" className="text-orange-600 hover:underline">Create Account</Link>
+          Not a member?{" "}
+          <Link to="/signup" className="text-orange-600 hover:underline">
+            Create Account
+          </Link>
         </p>
       </div>
     </div>
