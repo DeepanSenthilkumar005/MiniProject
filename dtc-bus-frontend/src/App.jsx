@@ -30,7 +30,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/track" element={<BusTracker/>} />
+          {(!!sessionStorage.getItem("role") && sessionStorage.getItem("role")=="Driver")&&<Route path="/track" element={<BusTracker/>} />}
           {!!!sessionStorage.getItem("userId") ? <Route path="/schedule" element={<Schedule />} /> : <Route path="/schedule" element={<DriverSchedule />} />}
           
           <Route path="/routes" element={<RoutesPage />} />

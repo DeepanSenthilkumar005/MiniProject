@@ -104,20 +104,17 @@ const Crew = () => {
 
       {/* Crew Form */}
       {!!sessionStorage.getItem("auth") && (
-        <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-          <h3 className="text-lg font-semibold mb-3">➕ Add Crew Member</h3>
-          <form
-            onSubmit={handleSubmit}
-            className="grid sm:grid-cols-1 md:grid-cols-2 md:gap-4"
-          >
+        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+          <h3 className="text-lg font-semibold mb-4">➕ Add Crew Member</h3>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
               name="name"
               placeholder="Name"
               value={formData.name}
               onChange={handleChange}
-              disabled={status ? false : true}
-              className="p-2 border rounded"
+              disabled={!status}
+              className="p-2 border rounded w-full"
               required
             />
 
@@ -126,8 +123,8 @@ const Crew = () => {
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="p-2 border rounded"
-              disabled={status ? false : true}
+              className="p-2 border rounded w-full"
+              disabled={!status}
               required
             >
               <option value="Driver">Driver</option>
@@ -140,8 +137,8 @@ const Crew = () => {
               placeholder="Contact"
               value={formData.contact}
               onChange={handleChange}
-              disabled={status ? false : true}
-              className="p-2 border rounded"
+              disabled={!status}
+              className="p-2 border rounded w-full"
               required
             />
             <input
@@ -150,13 +147,14 @@ const Crew = () => {
               placeholder="Email"
               value={formData.mail}
               onChange={handleChange}
-              disabled={status ? false : true}
-              className="p-2 border rounded lowercase"
+              disabled={!status}
+              className="p-2 border rounded w-full lowercase"
               required
             />
+
             <button
               type="submit"
-              className="col-span-2 cursor-pointer bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+              className="col-span-1 md:col-span-2 cursor-pointer bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition w-full"
             >
               {status ? "Add Crew Member" : <p>Submitting...</p>}
             </button>

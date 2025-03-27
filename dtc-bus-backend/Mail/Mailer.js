@@ -15,7 +15,7 @@ const sendMail = async (to, subject, text) => {
 
   const mailOptions = {
     from: {
-      name: "Auto-Reply",
+      name: "Bus360",
       address: process.env.EMAIL,
     }, // ✅ Added sender email
     to: to,
