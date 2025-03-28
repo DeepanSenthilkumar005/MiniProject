@@ -22,7 +22,7 @@ function BusTracker() {
   const updateInterval = 10 * 1000; // 10 seconds
   const [driverId, setDriverId] = useState(null);
 
-  // Fetch driverId from session storage
+  // Fetch driverId from session storage first
   useEffect(() => {
     const storedDriverId = sessionStorage.getItem("driverId");
     if (storedDriverId) {
