@@ -18,11 +18,12 @@ function BusTracker() {
   const [longitude, setLongitude] = useState(null);
   const [accuracy, setAccuracy] = useState(null);
   const [error, setError] = useState(null);
-  const busId = sessionStorage.getItem("driverId");
   const [remainingSec, setRemainingSec] = useState(10);
   const updateInterval = 10 * 1000; // 10 seconds
-
+  const [busId, setBusId] = useState(null);
+  
   useEffect(() => {
+    setBusId(sessionStorage.getItem("driverId"));
     requestLocation();
 
     let startTime = Date.now();
