@@ -103,7 +103,7 @@ const Crew = () => {
       )}
 
       {/* Crew Form */}
-      {!!sessionStorage.getItem("auth") && (
+      {sessionStorage.getItem("role")==="Admin" && (
         <div className="bg-white p-6 rounded-lg shadow-md mb-6">
           <h3 className="text-lg font-semibold mb-4">➕ Add Crew Member</h3>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
