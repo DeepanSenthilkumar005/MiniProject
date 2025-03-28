@@ -42,6 +42,8 @@ function Login() {
 
         if (res.data.role === "Driver" || res.data.role === "Conductor") {
           sessionStorage.setItem("userId", mail);
+          sessionStorage.setItem("driverId", res.data.id);
+          
         }
 
         // Send login notification email

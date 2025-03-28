@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import axios from "axios";
+import { backend } from "../App";
 
 // Fix default marker issue in Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker.png",
   shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
 });
 
@@ -16,44 +18,62 @@ function BusTracker() {
   const [longitude, setLongitude] = useState(null);
   const [accuracy, setAccuracy] = useState(null);
   const [error, setError] = useState(null);
+  const busId = sessionStorage.getItem("driverId");
   const [remainingSec, setRemainingSec] = useState(10);
   const updateInterval = 10 * 1000; // 10 seconds
 
   useEffect(() => {
-    requestLocation(); // Fetch location on first load
+    requestLocation();
 
     let startTime = Date.now();
-    
     const timer = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const timeLeft = Math.max(10 - Math.floor(elapsed / 1000), 0);
-      setRemainingSec(timeLeft);
+      setRemainingSec(Math.max(10 - Math.floor((Date.now() - startTime) / 1000), 0));
     }, 1000);
 
     const interval = setInterval(() => {
       requestLocation();
-      startTime = Date.now(); // Reset start time after updating location
+      startTime = Date.now();
     }, updateInterval);
+
+    // Detect when driver exits and delete location
+    window.addEventListener("beforeunload", deleteLocation);
 
     return () => {
       clearInterval(interval);
       clearInterval(timer);
+      window.removeEventListener("beforeunload", deleteLocation);
     };
+
+    
   }, []);
 
-  const requestLocation = () => {
+  const requestLocation = async () => {
     if (!navigator.geolocation) {
       setError("❌ Geolocation is not supported by your browser.");
       return;
     }
+    console.log("loc is "+sessionStorage.getItem("driverId"));
+    
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         setLatitude(position.coords.latitude);
         setLongitude(position.coords.longitude);
         setAccuracy(position.coords.accuracy);
         setError(null);
-        setRemainingSec(10); // Reset timer on update
+        
+        // Send location to backend
+        try {
+          console.log("try");
+          await axios.post(`${backend}/api/location/update`, {
+            busId,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+          console.log("📡 Location sent to backend");
+        } catch (err) {
+          console.error("❌ Error sending location:", err);
+        }
       },
       (err) => {
         console.error("❌ Geolocation Error:", err);
@@ -62,10 +82,10 @@ function BusTracker() {
             setError("❌ Permission denied. Please allow location access.");
             break;
           case 2:
-            setError("❌ Location unavailable. Try again later or switch networks.");
+            setError("❌ Location unavailable. Try again later.");
             break;
           case 3:
-            setError("⏳ Location request timed out. Please try again.");
+            setError("⏳ Location request timed out.");
             break;
           default:
             setError("❌ Unknown error occurred.");
@@ -74,6 +94,17 @@ function BusTracker() {
       { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
     );
   };
+
+  // Remove location when driver exits
+  const deleteLocation = async () => {
+    try {
+      await axios.delete(`${backend}/api/location/delete/${busId}`);
+      console.log("🗑️ Location deleted from backend");
+    } catch (err) {
+      console.error("❌ Error deleting location:", err);
+    }
+  };
+
 
   return (
     <div className="p-4 text-center">
@@ -91,27 +122,16 @@ function BusTracker() {
             <strong>🎯 Accuracy:</strong> ±{Math.round(accuracy)} meters
           </p>
 
-          {/* Map Display */}
           <div className="mt-4 w-full h-[400px] rounded-lg overflow-hidden">
-            <MapContainer
-              center={[latitude, longitude]}
-              zoom={15}
-              style={{ height: "400px", width: "100%" }}
-            >
+            <MapContainer center={[latitude, longitude]} zoom={15} style={{ height: "400px", width: "100%" }}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-              {/* User's Location Marker */}
               <Marker position={[latitude, longitude]}>
                 <Popup>📍 You are here</Popup>
               </Marker>
 
-              {/* Accuracy Circle */}
               {accuracy && (
-                <Circle
-                  center={[latitude, longitude]}
-                  radius={accuracy}
-                  pathOptions={{ fillColor: "blue", fillOpacity: 0.2, color: "blue" }}
-                />
+                <Circle center={[latitude, longitude]} radius={accuracy} pathOptions={{ fillColor: "blue", fillOpacity: 0.2, color: "blue" }} />
               )}
             </MapContainer>
           </div>
