@@ -30,13 +30,13 @@ function AdminBusTracker() {
 
       {busLocations.length > 0 ? (
         <div className="mt-4 w-full h-[500px] rounded-lg overflow-hidden">
-          <MapContainer center={[20.5937, 78.9629]} zoom={5} style={{ height: "500px", width: "100%" }}>
+          <MapContainer center={[11.361149748778901, 77.82368019054245]} zoom={10} style={{ height: "500px", width: "100%" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
             {busLocations.map((bus) => (
-              <Marker key={bus.busId} position={[bus.latitude, bus.longitude]}>
+              <Marker key={bus.driverId} position={[bus.latitude, bus.longitude]}>
                 <Popup>
-                  <strong>🚌 Bus ID:</strong> {bus.busId} <br />
+                  <strong>🚌 Bus ID:</strong> {bus.driverId} <br />
                   <strong>📍 Location:</strong> {bus.latitude}, {bus.longitude}
                 </Popup>
               </Marker>

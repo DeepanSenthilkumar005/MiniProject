@@ -20,10 +20,22 @@ function BusTracker() {
   const [error, setError] = useState(null);
   const [remainingSec, setRemainingSec] = useState(10);
   const updateInterval = 10 * 1000; // 10 seconds
-  const [busId, setBusId] = useState(null);
-  
+  const [driverId, setDriverId] = useState(null);
+
+  // Fetch driverId from session storage
   useEffect(() => {
-    setBusId(sessionStorage.getItem("driverId"));
+    const storedDriverId = sessionStorage.getItem("driverId");
+    if (storedDriverId) {
+      setDriverId(storedDriverId);
+    } else {
+      setError("❌ Driver ID not found in session storage.");
+    }
+  }, []);
+
+  // Start location tracking only when driverId is available
+  useEffect(() => {
+    if (!driverId) return; // Wait until driverId is set
+
     requestLocation();
 
     let startTime = Date.now();
@@ -44,17 +56,19 @@ function BusTracker() {
       clearInterval(timer);
       window.removeEventListener("beforeunload", deleteLocation);
     };
+  }, [driverId]); // Runs only when driverId is available
 
-    
-  }, []);
-
+  // Request location from browser
   const requestLocation = async () => {
     if (!navigator.geolocation) {
       setError("❌ Geolocation is not supported by your browser.");
       return;
     }
-    console.log("loc is "+sessionStorage.getItem("driverId"));
-    
+
+    if (!driverId) {
+      console.error("❌ Driver ID is missing, cannot update location.");
+      return; // Prevent sending request with null driverId
+    }
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -62,16 +76,14 @@ function BusTracker() {
         setLongitude(position.coords.longitude);
         setAccuracy(position.coords.accuracy);
         setError(null);
-        
-        // Send location to backend
+
         try {
-          console.log("try");
           await axios.post(`${backend}/api/location/update`, {
-            busId,
+            driverId, // Now driverId is guaranteed to be set
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           });
-          console.log("📡 Location sent to backend");
+          console.log("📡 Location sent to backend for driver:", driverId);
         } catch (err) {
           console.error("❌ Error sending location:", err);
         }
@@ -98,14 +110,14 @@ function BusTracker() {
 
   // Remove location when driver exits
   const deleteLocation = async () => {
+    if (!driverId) return; // Prevent errors if driverId is missing
     try {
-      await axios.delete(`${backend}/api/location/delete/${busId}`);
+      await axios.delete(`${backend}/api/location/delete/${driverId}`);
       console.log("🗑️ Location deleted from backend");
     } catch (err) {
       console.error("❌ Error deleting location:", err);
     }
   };
-
 
   return (
     <div className="p-4 text-center">
@@ -118,6 +130,7 @@ function BusTracker() {
       ) : latitude && longitude ? (
         <>
           <p>
+            <strong>📍 Id:</strong> {driverId} <br />
             <strong>📍 Latitude:</strong> {latitude} <br />
             <strong>📍 Longitude:</strong> {longitude} <br />
             <strong>🎯 Accuracy:</strong> ±{Math.round(accuracy)} meters
@@ -132,7 +145,11 @@ function BusTracker() {
               </Marker>
 
               {accuracy && (
-                <Circle center={[latitude, longitude]} radius={accuracy} pathOptions={{ fillColor: "blue", fillOpacity: 0.2, color: "blue" }} />
+                <Circle
+                  center={[latitude, longitude]}
+                  radius={accuracy}
+                  pathOptions={{ fillColor: "blue", fillOpacity: 0.2, color: "blue" }}
+                />
               )}
             </MapContainer>
           </div>

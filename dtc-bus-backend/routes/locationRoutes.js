@@ -18,15 +18,15 @@ router.delete("/delete/:driverId", async (req, res) => {
   }
 });
 
-// 📍 UPDATE Driver Location (or create if not exists)
+// 📍 UPDATE or CREATE Driver Location
 router.post("/update", async (req, res) => {
   const { driverId, latitude, longitude } = req.body;
 
   try {
     let bus = await Bus.findOneAndUpdate(
-      { driverId }, // Search by driverId
-      { latitude, longitude, lastUpdated: new Date() }, // Update fields
-      { upsert: true, new: true } // Create if not exists
+      { driverId }, // Find by driverId
+      { driverId, latitude, longitude, lastUpdated: new Date() }, // Update/Create fields
+      { upsert: true, new: true, setDefaultsOnInsert: true } // Create if not exists
     );
 
     res.status(200).json({ message: "Location updated successfully", bus });
@@ -34,6 +34,8 @@ router.post("/update", async (req, res) => {
     res.status(500).json({ error: "Failed to update location" });
   }
 });
+
+
 
 // 🌍 GET All Bus Locations
 router.get("/locations", async (req, res) => {
