@@ -15,8 +15,10 @@ router.post("/", async (req, res) => {
   if (msg === "Password Changed") {
     subject = "🔐 OTP from Bus360";
     OTP = Math.floor(1000 + Math.random() * 9000);
-    message = `Your OTP is **${OTP}**. Do not share this OTP with anyone for security reasons.  
-If you did not request this, please ignore this email.`;
+    message = `
+      <p>Your OTP is <strong>${OTP}</strong>. Do not share this OTP with anyone for security reasons.</p>
+      <p>If you did not request this, please ignore this email.</p>
+    `;
   }
 
   // ✅ CASE 2: Successful Login Notification
@@ -24,13 +26,16 @@ If you did not request this, please ignore this email.`;
     console.log("📌 Login Email Data:", msg);
 
     subject = `✅ Login Successful - Bus360`;
-    message = `Dear ${msg.name},  
+    message = `
+      <p>Dear <strong>${msg.name}</strong>,</p>
 
-You have **successfully logged into your Bus360 account**.  
-If this wasn't you, please reset your password immediately.  
+      <p>You have <strong>successfully logged into your Bus360 account</strong>.</p>
+      
+      <p>If this wasn't you, please reset your password immediately.</p>
 
-🚍 **Safe Travels,**  
-**The Bus360 Team**`;
+      <p>🚍 <strong>Safe Travels,</strong><br>
+      <strong>The Bus360 Team</strong></p>
+    `;
   }
 
   // ✅ CASE 3: New Crew Member Added by Admin
@@ -38,27 +43,32 @@ If this wasn't you, please reset your password immediately.
     console.log("📌 New Crew Member Email Data:", msg);
 
     subject = `🎉 Welcome to Bus360, ${msg.name}!`;
-    message = `Dear ${msg.name},  
+    message = `
+      <p>Dear <strong>${msg.name}</strong>,</p>
 
-You have been **added as a ${msg.role}** in the **Bus360 system** by the admin.  
+      <p>You have been <strong>added as a ${msg.role}</strong> in the <strong>Bus360 system</strong> by the admin.</p>
 
-🛠 **Your Login Credentials:**  
-- **Email:** ${email}  
-- **Default Password:** 1  
+      <p>🛠 <strong>Your Login Credentials:</strong></p>
+      <ul>
+        <li><strong>Email:</strong> ${email}</li>
+        <li><strong>Default Password:</strong> 1</li>
+      </ul>
 
-🔑 **Please log in and change your password immediately.**  
+      <p>🔑 <strong>Please log in and change your password immediately.</strong></p>
+      <a href="https://bus360.netlify.app">Click Here</a>
 
-If you have any concerns, please contact the admin.  
+      <p>If you have any concerns, please contact the admin.</p>
 
-🚍 **Best Regards,**  
-**The Bus360 Team**`;
+      <p>🚍 <strong>Best Regards,</strong><br>
+      <strong>The Bus360 Team</strong></p>
+    `;
   }
 
   try {
     console.log(`📨 Sending Email to: ${email} | Subject: ${subject}`);
 
-    // ✅ Send Email
-    const result = await sendMail(email, subject, message);
+    // ✅ Send Email (Ensure the mailer supports HTML format)
+    const result = await sendMail(email, subject, message, true); // Pass `true` to indicate HTML content
 
     if (result.success) {
       console.log("✅ Email Sent Successfully");

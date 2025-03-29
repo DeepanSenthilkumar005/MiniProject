@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-const sendMail = async (to, subject, text) => {
+const sendMail = async (to, subject, html) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     host: "smtp.gmail.com",
@@ -17,10 +17,10 @@ const sendMail = async (to, subject, text) => {
     from: {
       name: "Bus360",
       address: process.env.EMAIL,
-    }, // ✅ Added sender email
+    },
     to: to,
     subject: subject,
-    text: text, // ✅ Supports HTML formatting in email body
+    html: html, // ✅ Supports HTML formatting
   };
 
   try {
