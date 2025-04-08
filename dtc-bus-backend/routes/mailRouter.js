@@ -55,7 +55,7 @@ router.post("/", async (req, res) => {
       </ul>
 
       <p>🔑 <strong>Please log in and change your password immediately.</strong></p>
-      <a href="https://bus360.netlify.app">Click Here</a>
+      <a href="https://bus360.netlify.app/login">Login Here</a>
 
       <p>If you have any concerns, please contact the admin.</p>
 
