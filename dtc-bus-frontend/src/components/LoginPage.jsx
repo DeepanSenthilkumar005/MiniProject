@@ -206,7 +206,7 @@ function Login() {
                 className="w-full bg-orange-600 text-white py-2 rounded-md"
                 onClick={handleLogin}
               >
-                {status ? "Submitting.." : "Login"}
+                {status ? "Verifying.." : "Login"}
               </button>
             </>
           ) : (
