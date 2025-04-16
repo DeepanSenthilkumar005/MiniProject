@@ -51,14 +51,53 @@ const Schedule = () => {
 
     try {
       setStatus(false);
-      await axios.post(`${backend}/api/schedules`, {
+
+      // Create the schedule
+      const scheduleResponse = await axios.post(`${backend}/api/schedules`, {
         busId,
         routeId,
         departureTime,
         driverId,
         conductorId,
       });
+
       alert("✅ Schedule added successfully!");
+
+      // Fetch the driver and conductor details
+      const driver = crewMembers.find((member) => member._id === driverId);
+      const conductor = crewMembers.find(
+        (member) => member._id === conductorId
+      );
+      // console.log(driver.mail+" is driver");
+      // console.log(conductor.mail+" is conductor");
+      
+
+      // Prepare the message for the driver and conductor
+      const message = {
+        email: driver.mail, // Send email to driver
+        msg: {
+          role: "Assignment",
+          name: driver.name,
+          schedule: {
+            busName: buses.find((bus) => bus._id === busId).busName,
+            busNumber: buses.find((bus) => bus._id === busId).busNumber,
+            route: routes.find((route) => route._id === routeId).name,
+            time: departureTime,
+          },
+        },
+      };
+
+      // Send email to the driver
+      await axios.post(`${backend}/api/send-email`, message);
+
+      // Prepare message for the conductor
+      message.email = conductor.mail; // Send email to conductor
+      message.msg.name = conductor.name;
+
+      // Send email to the conductor
+      await axios.post(`${backend}/api/send-email`, message);
+
+      // Clear form data
       setBusId("");
       setRouteId("");
       setDepartureTime("");
@@ -73,7 +112,6 @@ const Schedule = () => {
       alert("❌ Failed to add schedule.");
     } finally {
       setStatus(true);
-
     }
   };
 
@@ -196,7 +234,7 @@ const Schedule = () => {
           </div>
 
           <button
-              disabled={status ? false : true}
+            disabled={status ? false : true}
             type="submit"
             className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition duration-200"
           >

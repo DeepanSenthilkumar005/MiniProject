@@ -37,6 +37,30 @@ router.post("/", async (req, res) => {
       <strong>The Bus360 Team</strong></p>
     `;
   }
+  // ✅ CASE 4: Crew Assignment Notification
+  else if (msg.role === "Assignment" && msg.schedule) {
+    subject = `📢 New Schedule Assigned - Bus360`;
+    message = `
+      <p>Dear <strong>${msg.name}</strong>,</p>
+  
+      <p>You have been assigned to a new schedule in the Bus360 system.</p>
+  
+      <ul>
+        <li><strong>Bus:</strong> ${msg.schedule.busName} (${
+      msg.schedule.busNumber
+    })</li>
+        <li><strong>Route:</strong> ${msg.schedule.route}</li>
+        <li><strong>Departure Time:</strong> ${new Date(
+          msg.schedule.time
+        ).toLocaleString()}</li>
+      </ul>
+  
+      <p>Please be ready for the shift and report on time.</p>
+  
+      <p>🚍 <strong>Regards,</strong><br>
+      <strong>Bus360 Team</strong></p>
+    `;
+  }
 
   // ✅ CASE 3: New Crew Member Added by Admin
   else if (msg.name && msg.role) {
