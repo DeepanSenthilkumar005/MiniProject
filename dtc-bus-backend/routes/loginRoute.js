@@ -1,14 +1,31 @@
 const express = require("express");
 const loginModel = require("../models/Login");
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 
+// router.get("/auth/:mail/:password", async (req, res) => {
+//   try {
+//     const mailId = await loginModel.findOne({ mail: req.params.mail });
+//     const password = req.params.password;
+//     if (!mailId) {
+//       res.status(201).json("Register your Mail");
+//     } else if (password === mailId.password) {
+//       res.status(200).json({msg:"✅ Valid Password",role:mailId.role,name:mailId.name,id:mailId._id});
+//     } else {
+//       res.status(200).json("Invalid Password");
+//     }
+//   } catch {
+//     console.log("Error in the Mail");
+//   }
+// });
 router.get("/auth/:mail/:password", async (req, res) => {
   try {
     const mailId = await loginModel.findOne({ mail: req.params.mail });
     const password = req.params.password;
+    const passwordValidator = bcrypt.compareSync(password,mailId.password);
     if (!mailId) {
       res.status(201).json("Register your Mail");
-    } else if (password === mailId.password) {
+    } else if (passwordValidator) {
       res.status(200).json({msg:"✅ Valid Password",role:mailId.role,name:mailId.name,id:mailId._id});
     } else {
       res.status(200).json("Invalid Password");
@@ -17,16 +34,40 @@ router.get("/auth/:mail/:password", async (req, res) => {
     console.log("Error in the Mail");
   }
 });
+
+// router.post("/auth", async (req, res) => {
+//   try {
+//     const add = new loginModel(req.body);
+//     await add.save();
+//     res.status(200).json("✅ Succesfull Added");
+//   } catch (error) {
+//     if (error.code === 11000) {
+//       res.status(400).json({ message: "Email already registered" });
+//     } else {
+//       console.log("Error in Adding the File " + error);
+//     }
+//   }
+// });
+
 router.post("/auth", async (req, res) => {
   try {
-    const add = new loginModel(req.body);
+    const { name, mail, password, role } = req.body;
+    // console.log(mail,name,password,role);
+    
+    const hashPassword = await bcrypt.hash(password,10);
+    const add = new loginModel({
+      name:name,
+      mail:mail,
+      password:hashPassword,
+      role:role
+    });
     await add.save();
     res.status(200).json("✅ Succesfull Added");
   } catch (error) {
     if (error.code === 11000) {
       res.status(400).json({ message: "Email already registered" });
     } else {
-      console.log("Error in Adding the File " + error);
+      console.log("Error in Adding the User " + error);
     }
   }
 });
@@ -61,8 +102,8 @@ router.post("/search", async (req, res) => {
 router.put("/pass", async (req, res) => {
   try {
     const { mail, password } = req.body;
-
-    await loginModel.findOneAndUpdate({ mail }, { password: password });
+    const hashPassword = await bcrypt.hash(password,10);
+    await loginModel.findOneAndUpdate({ mail }, { password: hashPassword });
 
     console.log("✅ Password Changed Successfully");
     res
